@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <dimen name="txt_padding_h">20dp</dimen>
+  <dimen name="btn_default_size">60dp</dimen>
+  <dimen name="default_radius">120dp</dimen>
+  <dimen name="min_radius">120dp</dimen>
+</resources>

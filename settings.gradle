@@ -1,0 +1,3 @@
+include ':smart-gesture'
+include ':app'
+rootProject.name = "SmartGestureExample"
