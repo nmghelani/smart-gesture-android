@@ -41,7 +41,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-        SmartGestureListener smartGestureListener = new SmartGestureListener(this, buttonArrayList, onSelectListener);
+        SmartGestureListener smartGestureListener = new SmartGestureListener(this, buttonArrayList);
+        smartGestureListener.setOnSelectListener(onSelectListener);
+        smartGestureListener.setBackgroundColor(getResources().getColor(R.color.teal_700));
+        smartGestureListener.setActionBarHeight(getSupportActionBar().getHeight());
+        smartGestureListener.setNonSelectedButtonDrawableResId(R.drawable.bg_unhovered);
+        smartGestureListener.setSelectedButtonDrawableResId(R.drawable.bg_hovered);
+        smartGestureListener.setSelectedButtonTintResId(R.color.white);
+        smartGestureListener.setNonSelectedButtonTintResId(R.color.white);
         binding.btnTouch.setOnTouchListener(smartGestureListener);
         binding.sbSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -81,11 +88,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void setButtonList(String noOfButtons) {
         buttonArrayList.clear();
-        buttonArrayList.add(new GestureButton(0, R.drawable.ic_launcher_background, "Share", "share wherever you want"));
-        buttonArrayList.add(new GestureButton(1, R.drawable.ic_launcher_background, "Save", "Save locally"));
-        buttonArrayList.add(new GestureButton(2, R.drawable.ic_launcher_background, "Facebook", "Post it to Facebook"));
-        buttonArrayList.add(new GestureButton(3, R.drawable.ic_launcher_background, "Instagram", "Post it to Instagram"));
-        buttonArrayList.add(new GestureButton(4, R.drawable.ic_launcher_background, "Twitter", "Post it to Twitter"));
+        buttonArrayList.add(new GestureButton(0, R.drawable.ic_check, "Share", "share wherever you want"));
+        buttonArrayList.add(new GestureButton(1, R.drawable.ic_check, "Save", "Save locally"));
+        buttonArrayList.add(new GestureButton(2, R.drawable.ic_check, "Facebook", "Post it to Facebook"));
+        buttonArrayList.add(new GestureButton(3, R.drawable.ic_check, "Instagram", "Post it to Instagram"));
+        buttonArrayList.add(new GestureButton(4, R.drawable.ic_check, "Twitter", "Post it to Twitter"));
         int no = Integer.parseInt(noOfButtons);
         if (no > 0 && no <= 5) {
             for (int i = 5; i > no; i--) {

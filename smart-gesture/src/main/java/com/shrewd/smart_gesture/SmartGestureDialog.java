@@ -3,8 +3,11 @@ package com.shrewd.smart_gesture;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Rect;
-import android.os.Bundle;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -20,6 +23,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 
@@ -27,30 +31,38 @@ public class SmartGestureDialog extends Dialog {
 
     private static final String TAG = SmartGestureDialog.class.getName();
     private List<GestureButton> buttonList;
-    private final OnSelectListener onSelectListener;
+    private OnSelectListener onSelectListener;
     private DgSmartGestureBinding binding;
     private final Context mContext;
-    private final View touchedView;
+    private View touchedView;
     private View lastSelected;
-    private int statusBarHeight, actionBarHeight;
+    private int actionBarHeight;
     private int radiusPx, btnSizePx;
     private final MutableLiveData<Integer> MIN_RADIUS = new MutableLiveData<>();
     private final MutableLiveData<Integer> MAX_RADIUS = new MutableLiveData<>();
     private final MutableLiveData<Integer> MIN_SIZE = new MutableLiveData<>();
     private final MutableLiveData<Integer> MAX_SIZE = new MutableLiveData<>();
+    private int backgroundColor, selectedButtonTint, nonSelectedButtonTint;
+    private Drawable selectedButtonDrawable, nonSelectedButtonDrawable;
 
-    public SmartGestureDialog(@NonNull Context mContext, List<GestureButton> buttonList, View touchedView, OnSelectListener onSelectListener) {
+    public SmartGestureDialog(@NonNull Context mContext, List<GestureButton> buttonList) {
         super(mContext);
         this.mContext = mContext;
-        this.touchedView = touchedView;
         this.buttonList = buttonList;
-        this.onSelectListener = onSelectListener;
         initConstraints();
         MAX_RADIUS.postValue(pxToDp((getScreenWidthPixels(mContext) + btnSizePx) / 3f, mContext));
         btnSizePx = Math.min(dpToPx(MAX_SIZE.getValue(), mContext), Math.max(dpToPx(MIN_SIZE.getValue(), mContext), mContext.getResources().getDimensionPixelSize(R.dimen.btn_default_size)));
         MIN_RADIUS.postValue(pxToDp(Math.max(dpToPx(MIN_RADIUS.getValue(), mContext), btnSizePx * 2.5f), mContext));
         Log.d(TAG, "SmartGestureDialog: minimum radius: " + MIN_RADIUS);
         this.radiusPx = Math.min(dpToPx(MAX_RADIUS.getValue(), mContext), Math.max(dpToPx(MIN_RADIUS.getValue(), mContext), mContext.getResources().getDimensionPixelSize(R.dimen.default_radius)));
+        backgroundColor = mContext.getResources().getColor(R.color.transparent_black);
+        selectedButtonDrawable = ContextCompat.getDrawable(mContext, R.drawable.bg_checked);
+        selectedButtonTint = ContextCompat.getColor(mContext, R.color.white);
+        nonSelectedButtonDrawable = ContextCompat.getDrawable(mContext, R.drawable.bg_unchecked);
+        nonSelectedButtonTint = ContextCompat.getColor(mContext, R.color.black);
+    }
+
+    private void observeConstraints() {
         MIN_RADIUS.observe((LifecycleOwner) mContext, integer -> Log.d(TAG, "onConstraintsChanged: MIN_RADIUS: " + integer));
         MAX_RADIUS.observe((LifecycleOwner) mContext, integer -> Log.d(TAG, "onConstraintsChanged: MAX_RADIUS: " + integer));
         MIN_SIZE.observe((LifecycleOwner) mContext, integer -> Log.d(TAG, "onConstraintsChanged: MIN_SIZE: " + integer));
@@ -62,10 +74,15 @@ public class SmartGestureDialog extends Dialog {
         MAX_RADIUS.setValue(250);
         MIN_SIZE.setValue(50);
         MAX_SIZE.setValue(80);
+        observeConstraints();
     }
 
     public void updateList(List<GestureButton> buttonList) {
         this.buttonList = buttonList;
+    }
+
+    public void setOnSelectListener(OnSelectListener onSelectListener) {
+        this.onSelectListener = onSelectListener;
     }
 
     public void setRadius(int radiusInDp) {
@@ -79,10 +96,51 @@ public class SmartGestureDialog extends Dialog {
         Log.d(TAG, "setBtnSize: " + MIN_RADIUS + " " + btnSizePx);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void setTouchedView(View touchedView) {
+        this.touchedView = touchedView;
+    }
 
+    public void setActionBarHeight(int actionBarHeight) {
+        this.actionBarHeight = actionBarHeight;
+    }
+
+    public void setBackgroundColor(int backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public void setSelectedButtonTint(int selectedButtonTint) {
+        this.selectedButtonTint = selectedButtonTint;
+    }
+
+    public void setNonSelectedButtonTint(int nonSelectedButtonTint) {
+        this.nonSelectedButtonTint = nonSelectedButtonTint;
+    }
+
+    public void setSelectedButtonTintResId(int resId) {
+        selectedButtonTint = ContextCompat.getColor(mContext, resId);
+    }
+
+    public void setNonSelectedButtonTintResId(int resId) {
+        nonSelectedButtonTint = ContextCompat.getColor(mContext, resId);
+    }
+
+    public void setSelectedButtonDrawable(Drawable selectedButtonDrawable) {
+        this.selectedButtonDrawable = selectedButtonDrawable;
+    }
+
+    public void setNonSelectedButtonDrawable(Drawable nonSelectedButtonDrawable) {
+        this.nonSelectedButtonDrawable = nonSelectedButtonDrawable;
+    }
+
+    public void setSelectedButtonDrawableResId(int resId) {
+        this.selectedButtonDrawable = ContextCompat.getDrawable(mContext, resId);
+    }
+
+    public void setNonSelectedButtonDrawableResId(int resId) {
+        this.nonSelectedButtonDrawable = ContextCompat.getDrawable(mContext, resId);
+    }
+
+    private void initDialog() {
         MAX_RADIUS.postValue(pxToDp((getScreenWidthPixels(mContext) + btnSizePx) / 3f, mContext));
         Log.d(TAG, "onCreate: " + MAX_RADIUS);
 
@@ -92,7 +150,6 @@ public class SmartGestureDialog extends Dialog {
         repositionDescriptionView();
         Rect frame = new Rect();
         ((Activity) mContext).getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
-        statusBarHeight = frame.top;
 
         TypedValue typedValue = new TypedValue();
         mContext.getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true);
@@ -109,6 +166,14 @@ public class SmartGestureDialog extends Dialog {
             GestureButton gestureButton = buttonList.get(isEvenNoOfBtn ? i - 1 : i);
             ImageView imageView = new ImageView(mContext);
             imageView.setId(gestureButton.getId());
+            imageView.setPadding((int) (btnSizePx * 0.2), (int) (btnSizePx * 0.2), (int) (btnSizePx * 0.2), (int) (btnSizePx * 0.2));
+            imageView.setImageResource(gestureButton.getIconResId());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                imageView.setElevation(10);
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                imageView.setImageTintList(ColorStateList.valueOf(nonSelectedButtonTint));
+            }
             ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(btnSizePx, btnSizePx);
             if (i == 0) {
                 params.startToStart = binding.rootLayout.getId();
@@ -154,14 +219,14 @@ public class SmartGestureDialog extends Dialog {
                     params.leftMargin = (int) ((radiusPx * Math.sin(Math.PI / 2)) - btnSizePx);
                 }
             }
-            imageView.setBackgroundResource(R.drawable.bg_unchecked);
+            imageView.setBackground(nonSelectedButtonDrawable);
             imageView.setLayoutParams(params);
             binding.rootLayout.addView(imageView);
         }
 
         Window window = getWindow();
         if (window != null) {
-            window.setBackgroundDrawableResource(R.color.transparent_black);
+            window.setBackgroundDrawable(new ColorDrawable(backgroundColor));
             window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             WindowManager.LayoutParams params = window.getAttributes();
             params.width = WindowManager.LayoutParams.MATCH_PARENT;
@@ -172,7 +237,7 @@ public class SmartGestureDialog extends Dialog {
 
     @Override
     public void show() {
-        onCreate(null);
+        initDialog();
         super.show();
     }
 
@@ -213,8 +278,10 @@ public class SmartGestureDialog extends Dialog {
             case MotionEvent.ACTION_MOVE:
                 Rect rectFilter = new Rect();
                 touchedView.getHitRect(rectFilter);
-                int rectX = (int) (event.getX() + rectFilter.left);
-                int rectY = (int) (event.getY() + rectFilter.top + actionBarHeight);
+                int[] coords = {0, 0};
+                touchedView.getLocationOnScreen(coords);
+                int rectX = (int) (event.getX() + coords[0]);
+                int rectY = (int) (event.getY() + coords[1] - actionBarHeight);
 
                 for (int i = 0; i < binding.rootLayout.getChildCount(); i++) {
                     View view = binding.rootLayout.getChildAt(i);
@@ -222,7 +289,7 @@ public class SmartGestureDialog extends Dialog {
                         Rect rect = new Rect();
                         view.getHitRect(rect);
                         if (rect.contains(rectX, rectY)) {
-                            onSelected(view);
+                            onSelected((ImageView) view);
                             return true;
                         }
                     }
@@ -243,10 +310,13 @@ public class SmartGestureDialog extends Dialog {
         }
     }
 
-    private void onSelected(View view) {
+    private void onSelected(ImageView view) {
         deselectAll();
         lastSelected = view;
-        view.setBackgroundResource(R.drawable.bg_checked);
+        view.setBackground(selectedButtonDrawable);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            view.setImageTintList(ColorStateList.valueOf(selectedButtonTint));
+        }
         view.setScaleX(1.2f);
         view.setScaleY(1.2f);
         GestureButton selectedGestureButton = getGestureButtonById(view.getId());
@@ -260,7 +330,10 @@ public class SmartGestureDialog extends Dialog {
         for (int i = 0; i < binding.rootLayout.getChildCount(); i++) {
             View view = binding.rootLayout.getChildAt(i);
             if (view instanceof ImageView && view != binding.ivFocus) {
-                view.setBackgroundResource(R.drawable.bg_unchecked);
+                view.setBackground(nonSelectedButtonDrawable);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ((ImageView) view).setImageTintList(ColorStateList.valueOf(nonSelectedButtonTint));
+                }
                 view.setScaleX(1f);
                 view.setScaleY(1f);
             }
