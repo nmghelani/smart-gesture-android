@@ -42,9 +42,10 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         SmartGestureListener smartGestureListener = new SmartGestureListener(this, buttonArrayList);
+//        smartGestureListener.setVerticalOffset(50);
         smartGestureListener.setOnSelectListener(onSelectListener);
+        smartGestureListener.setButtonPadding(50);
         smartGestureListener.setBackgroundColor(getResources().getColor(R.color.teal_700));
-        smartGestureListener.setActionBarHeight(getSupportActionBar().getHeight());
         smartGestureListener.setNonSelectedButtonDrawableResId(R.drawable.bg_unhovered);
         smartGestureListener.setSelectedButtonDrawableResId(R.drawable.bg_hovered);
         smartGestureListener.setSelectedButtonTintResId(R.color.white);
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         buttonArrayList.add(new GestureButton(2, R.drawable.ic_check, "Facebook", "Post it to Facebook"));
         buttonArrayList.add(new GestureButton(3, R.drawable.ic_check, "Instagram", "Post it to Instagram"));
         buttonArrayList.add(new GestureButton(4, R.drawable.ic_check, "Twitter", "Post it to Twitter"));
+        buttonArrayList.add(new GestureButton(4, R.drawable.ic_check, "Whatsapp", "Post it to Whatsapp"));
         int no = Integer.parseInt(noOfButtons);
         if (no > 0 && no <= 5) {
             for (int i = 5; i > no; i--) {

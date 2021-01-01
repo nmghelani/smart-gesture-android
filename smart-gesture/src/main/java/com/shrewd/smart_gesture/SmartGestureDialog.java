@@ -38,12 +38,14 @@ public class SmartGestureDialog extends Dialog {
     private View lastSelected;
     private int actionBarHeight;
     private int radiusPx, btnSizePx;
+    private Integer buttonPadding;
     private final MutableLiveData<Integer> MIN_RADIUS = new MutableLiveData<>();
     private final MutableLiveData<Integer> MAX_RADIUS = new MutableLiveData<>();
     private final MutableLiveData<Integer> MIN_SIZE = new MutableLiveData<>();
     private final MutableLiveData<Integer> MAX_SIZE = new MutableLiveData<>();
     private int backgroundColor, selectedButtonTint, nonSelectedButtonTint;
     private Drawable selectedButtonDrawable, nonSelectedButtonDrawable;
+    private float horizontalOffset = 0, verticalOffset = 0;
 
     public SmartGestureDialog(@NonNull Context mContext, List<GestureButton> buttonList) {
         super(mContext);
@@ -60,6 +62,14 @@ public class SmartGestureDialog extends Dialog {
         selectedButtonTint = ContextCompat.getColor(mContext, R.color.white);
         nonSelectedButtonDrawable = ContextCompat.getDrawable(mContext, R.drawable.bg_unchecked);
         nonSelectedButtonTint = ContextCompat.getColor(mContext, R.color.black);
+
+        TypedValue typedValue = new TypedValue();
+        mContext.getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true);
+        try {
+            actionBarHeight = TypedValue.complexToDimensionPixelSize(typedValue.data, mContext.getResources().getDisplayMetrics());
+        } catch (Exception ex) {
+            actionBarHeight = 0;
+        }
     }
 
     private void observeConstraints() {
@@ -78,6 +88,11 @@ public class SmartGestureDialog extends Dialog {
     }
 
     public void updateList(List<GestureButton> buttonList) {
+        if (buttonList.size() > 5) {
+            for (int i = 5; i < buttonList.size(); i++) {
+                buttonList.remove(i);
+            }
+        }
         this.buttonList = buttonList;
     }
 
@@ -85,15 +100,17 @@ public class SmartGestureDialog extends Dialog {
         this.onSelectListener = onSelectListener;
     }
 
+    public void setButtonPadding(int buttonPadding) {
+        this.buttonPadding = buttonPadding;
+    }
+
     public void setRadius(int radiusInDp) {
-        Log.d(TAG, "setRadius: " + radiusInDp);
         this.radiusPx = dpToPx(Math.min(MAX_RADIUS.getValue(), Math.max(MIN_RADIUS.getValue(), radiusInDp)), mContext);
     }
 
     public void setBtnSize(int btnSizeInDp) {
         this.btnSizePx = dpToPx(Math.min(MAX_SIZE.getValue(), Math.max(MIN_SIZE.getValue(), btnSizeInDp)), mContext);
         MIN_RADIUS.postValue(pxToDp(Math.max(mContext.getResources().getDimensionPixelSize(R.dimen.min_radius), btnSizePx * 2.5f), mContext));
-        Log.d(TAG, "setBtnSize: " + MIN_RADIUS + " " + btnSizePx);
     }
 
     public void setTouchedView(View touchedView) {
@@ -140,6 +157,14 @@ public class SmartGestureDialog extends Dialog {
         this.nonSelectedButtonDrawable = ContextCompat.getDrawable(mContext, resId);
     }
 
+    public void setHorizontalOffset(float horizontalOffset) {
+        this.horizontalOffset = horizontalOffset;
+    }
+
+    public void setVerticalOffset(float verticalOffset) {
+        this.verticalOffset = verticalOffset;
+    }
+
     private void initDialog() {
         MAX_RADIUS.postValue(pxToDp((getScreenWidthPixels(mContext) + btnSizePx) / 3f, mContext));
         Log.d(TAG, "onCreate: " + MAX_RADIUS);
@@ -151,14 +176,6 @@ public class SmartGestureDialog extends Dialog {
         Rect frame = new Rect();
         ((Activity) mContext).getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
 
-        TypedValue typedValue = new TypedValue();
-        mContext.getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true);
-        try {
-            actionBarHeight = TypedValue.complexToDimensionPixelSize(typedValue.data, mContext.getResources().getDisplayMetrics());
-        } catch (Exception ex) {
-            actionBarHeight = 0;
-        }
-
         int focusId = binding.ivFocus.getId();
 
         boolean isEvenNoOfBtn = isEven(buttonList.size());
@@ -166,7 +183,10 @@ public class SmartGestureDialog extends Dialog {
             GestureButton gestureButton = buttonList.get(isEvenNoOfBtn ? i - 1 : i);
             ImageView imageView = new ImageView(mContext);
             imageView.setId(gestureButton.getId());
-            imageView.setPadding((int) (btnSizePx * 0.2), (int) (btnSizePx * 0.2), (int) (btnSizePx * 0.2), (int) (btnSizePx * 0.2));
+            if (buttonPadding == null) {
+                buttonPadding = (int) (btnSizePx * 0.2);
+            }
+            imageView.setPadding(buttonPadding, buttonPadding, buttonPadding, buttonPadding);
             imageView.setImageResource(gestureButton.getIconResId());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 imageView.setElevation(10);
@@ -280,8 +300,8 @@ public class SmartGestureDialog extends Dialog {
                 touchedView.getHitRect(rectFilter);
                 int[] coords = {0, 0};
                 touchedView.getLocationOnScreen(coords);
-                int rectX = (int) (event.getX() + coords[0]);
-                int rectY = (int) (event.getY() + coords[1] - actionBarHeight);
+                int rectX = (int) (event.getX() + coords[0] + horizontalOffset);
+                int rectY = (int) (event.getY() + coords[1] - actionBarHeight + verticalOffset);
 
                 for (int i = 0; i < binding.rootLayout.getChildCount(); i++) {
                     View view = binding.rootLayout.getChildAt(i);

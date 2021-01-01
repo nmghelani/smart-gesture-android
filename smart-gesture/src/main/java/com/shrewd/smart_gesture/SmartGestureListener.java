@@ -25,6 +25,10 @@ public class SmartGestureListener implements View.OnTouchListener {
         dialog.setOnSelectListener(onSelectListener);
     }
 
+    public void setButtonPadding(int buttonPadding) {
+        dialog.setButtonPadding(buttonPadding);
+    }
+
     public void setRadius(int radiusInDp) {
         dialog.setRadius(radiusInDp);
     }
@@ -71,6 +75,14 @@ public class SmartGestureListener implements View.OnTouchListener {
 
     public void setNonSelectedButtonDrawableResId(int resId) {
         dialog.setNonSelectedButtonDrawableResId(resId);
+    }
+
+    public void setHorizontalOffset(float horizontalOffset) {
+        dialog.setHorizontalOffset(horizontalOffset);
+    }
+
+    public void setVerticalOffset(float verticalOffset) {
+        dialog.setVerticalOffset(verticalOffset);
     }
 
     @Override
