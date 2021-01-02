@@ -88,4 +88,4 @@ new Properties.Builder(this)
 ```
 
 
-Voila, You've sucessfully customized gesture dialog.
+Voila, You've sucessfully customized the smart-gesture-dialog for android.
