@@ -1,7 +1,6 @@
 package com.shrewd.smart_gesture;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,6 +13,7 @@ public class SmartGestureListener implements View.OnTouchListener {
     private final List<GestureButton> buttonList;
     private boolean isStillDown = false, isGestureRunning = false;
     private SmartGestureDialog dialog;
+    private long delay;
 
     public SmartGestureListener(Context mContext, List<GestureButton> buttonList) {
         this.mContext = mContext;
@@ -21,68 +21,13 @@ public class SmartGestureListener implements View.OnTouchListener {
         dialog = new SmartGestureDialog(mContext, buttonList);
     }
 
-    public void setOnSelectListener(OnSelectListener onSelectListener) {
-        dialog.setOnSelectListener(onSelectListener);
+    public void setProperties(Properties properties) {
+        delay = properties.getDelay();
+        dialog.setProperties(properties);
     }
 
-    public void setButtonPadding(int buttonPadding) {
-        dialog.setButtonPadding(buttonPadding);
-    }
-
-    public void setRadius(int radiusInDp) {
-        dialog.setRadius(radiusInDp);
-    }
-
-    public void setBtnSize(int btnSizeInDp) {
-        dialog.setBtnSize(btnSizeInDp);
-    }
-
-    public void setActionBarHeight(int actionBarHeight) {
-        dialog.setActionBarHeight(actionBarHeight);
-    }
-
-    public void setBackgroundColor(int backgroundColor) {
-        dialog.setBackgroundColor(backgroundColor);
-    }
-
-    public void setSelectedButtonTint(int selectedButtonTint) {
-        dialog.setSelectedButtonTint(selectedButtonTint);
-    }
-
-    public void setNonSelectedButtonTint(int nonSelectedButtonTint) {
-        dialog.setNonSelectedButtonTint(nonSelectedButtonTint);
-    }
-
-    public void setSelectedButtonTintResId(int resId) {
-        dialog.setSelectedButtonTintResId(resId);
-    }
-
-    public void setNonSelectedButtonTintResId(int resId) {
-        dialog.setNonSelectedButtonTintResId(resId);
-    }
-
-    public void setSelectedButtonDrawable(Drawable selectedButtonDrawable) {
-        dialog.setSelectedButtonDrawable(selectedButtonDrawable);
-    }
-
-    public void setNonSelectedButtonDrawable(Drawable nonSelectedButtonDrawable) {
-        dialog.setNonSelectedButtonDrawable(nonSelectedButtonDrawable);
-    }
-
-    public void setSelectedButtonDrawableResId(int resId) {
-        dialog.setSelectedButtonDrawableResId(resId);
-    }
-
-    public void setNonSelectedButtonDrawableResId(int resId) {
-        dialog.setNonSelectedButtonDrawableResId(resId);
-    }
-
-    public void setHorizontalOffset(float horizontalOffset) {
-        dialog.setHorizontalOffset(horizontalOffset);
-    }
-
-    public void setVerticalOffset(float verticalOffset) {
-        dialog.setVerticalOffset(verticalOffset);
+    public void setCallback(SmartGestureCallBack smartGestureCallBack) {
+        dialog.setCallback(smartGestureCallBack);
     }
 
     @Override
@@ -100,7 +45,7 @@ public class SmartGestureListener implements View.OnTouchListener {
                             dialog.show();
                         }
                     }
-                }, 500);
+                }, delay);
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
@@ -110,9 +55,9 @@ public class SmartGestureListener implements View.OnTouchListener {
                 isStillDown = false;
                 isGestureRunning = false;
                 break;
-            case MotionEvent.ACTION_MOVE:
-                dialog.dispatchTouchEvent(event);
-                break;
+        }
+        if (dialog != null) {
+            dialog.dispatchTouchEvent(event);
         }
         return true;
     }

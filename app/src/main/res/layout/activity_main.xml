@@ -1,85 +1,298 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/tvRadius"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Radius (100)"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvNoOfBtn" />
-
-    <TextView
-        android:id="@+id/tvSize"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Size (50)"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvRadius" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/text_input_layout"
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:hint="No of Buttons"
-        app:endIconDrawable="@drawable/ic_check"
-        app:endIconMode="custom"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="60dp"
+        tools:context=".MainActivity">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etNoOfButton"
-            android:inputType="number"
-            android:text="4"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            tools:context=".MainActivity">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:id="@+id/tvRadius"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="Radius (0)"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvNoOfBtn" />
 
-    <TextView
-        android:id="@+id/tvNoOfBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Number of buttons: 5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_input_layout" />
+            <TextView
+                android:id="@+id/tvSize"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="Size (0)"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvRadius" />
 
-    <SeekBar
-        android:id="@+id/sbRadius"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:max="250"
-        app:layout_constraintBottom_toBottomOf="@id/tvRadius"
-        app:layout_constraintStart_toEndOf="@id/tvRadius"
-        app:layout_constraintTop_toTopOf="@id/tvRadius" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/text_input_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:hint="No of Buttons"
+                app:endIconDrawable="@drawable/ic_check"
+                app:endIconMode="custom"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-    <SeekBar
-        android:id="@+id/sbSize"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:max="100"
-        app:layout_constraintBottom_toBottomOf="@id/tvSize"
-        app:layout_constraintStart_toEndOf="@id/tvSize"
-        app:layout_constraintTop_toTopOf="@id/tvSize" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNoOfButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="4" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_padding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:hint="Padding(%)"
+                app:endIconMode="clear_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvSizeConstraints">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPadding"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberSigned"
+                    android:text="20" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_h_offset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:hint="Horizontal offset"
+                app:endIconMode="clear_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/til_padding">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_h_offset"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberSigned"
+                    android:text="0" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_v_offset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:hint="Vertical offset"
+                app:endIconMode="clear_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/til_h_offset">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_v_offset"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberSigned"
+                    android:text="0" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_text_h_offset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:hint="Text Horizontal offset"
+                app:endIconMode="clear_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/til_v_offset">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_text_h_offset"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberSigned"
+                    android:text="0" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_text_v_offset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:hint="Text Verticle offset"
+                app:endIconMode="clear_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/til_text_h_offset">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_text_v_offset"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberSigned"
+                    android:text="0" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_h_touch_offset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:hint="Horizontal touch offset"
+                app:endIconMode="clear_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/til_text_v_offset">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_h_touch_offset"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberSigned"
+                    android:text="0" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_v_touch_offset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:hint="Vertical touch offset"
+                app:endIconMode="clear_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/til_h_touch_offset">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_v_touch_offset"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberSigned"
+                    android:text="0" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tvGravityLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="Text alignment"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/til_v_touch_offset" />
+
+            <RadioGroup
+                android:id="@+id/rgGravity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvGravityLabel">
+
+                <RadioButton
+                    android:id="@+id/rbtnLeft"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="Left" />
+
+                <RadioButton
+                    android:id="@+id/rbtnCenter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Center" />
+
+                <RadioButton
+                    android:id="@+id/rbtnRight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Right" />
+
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/tvNoOfBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="Number of buttons: 5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_input_layout" />
+
+            <TextView
+                android:id="@+id/tvRadiusConstraints"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="Radius (Min: 0, Max: 0)"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvSize" />
+
+            <TextView
+                android:id="@+id/tvSizeConstraints"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="Size (Min: 0, Max: 0)"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvRadiusConstraints" />
+
+            <SeekBar
+                android:id="@+id/sbRadius"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:max="250"
+                app:layout_constraintBottom_toBottomOf="@id/tvRadius"
+                app:layout_constraintStart_toEndOf="@id/tvRadius"
+                app:layout_constraintTop_toTopOf="@id/tvRadius" />
+
+            <SeekBar
+                android:id="@+id/sbSize"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:max="100"
+                app:layout_constraintBottom_toBottomOf="@id/tvSize"
+                app:layout_constraintStart_toEndOf="@id/tvSize"
+                app:layout_constraintTop_toTopOf="@id/tvSize" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
 
     <Button
         android:id="@+id/btn_touch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Touch me!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_gravity="bottom|center"
+        android:layout_margin="10dp"
+        android:text="Touch me!" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

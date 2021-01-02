@@ -3,5 +3,6 @@
   <dimen name="txt_padding_h">20dp</dimen>
   <dimen name="btn_default_size">60dp</dimen>
   <dimen name="default_radius">120dp</dimen>
-  <dimen name="min_radius">120dp</dimen>
+  <dimen name="min_size">40dp</dimen>
+  <dimen name="max_size">80dp</dimen>
 </resources>

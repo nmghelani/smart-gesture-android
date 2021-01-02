@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/root_layout"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/root_layout"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@color/transparent_black"
+  android:padding="20dp">
+
+  <TextView
+    android:id="@+id/tv_title"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/transparent_black">
+    android:layout_height="wrap_content"
+    android:text="Hover to see options"
+    android:textColor="@color/white"
+    android:textSize="25sp"
+    android:textStyle="bold"
+    app:layout_constraintBottom_toTopOf="@id/tv_description" />
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/txt_padding_h"
-        android:text="Hover to see options"
-        android:textColor="@color/white"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/tv_description" />
+  <TextView
+    android:id="@+id/tv_description"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="214dp"
+    android:paddingVertical="@dimen/txt_padding_h"
+    android:text="Hover on any button to see details"
+    android:textColor="@color/grey"
+    android:textSize="17sp"
+    app:layout_constraintBottom_toTopOf="@id/iv_focus" />
 
-    <TextView
-        android:id="@+id/tv_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="214dp"
-        android:padding="@dimen/txt_padding_h"
-        android:text="Hover on any button to see details"
-        android:textColor="@color/grey"
-        android:textSize="17sp"
-        app:layout_constraintBottom_toTopOf="@id/iv_focus" />
-
-    <ImageView
-        android:id="@+id/iv_focus"
-        android:layout_width="@dimen/btn_default_size"
-        android:layout_height="@dimen/btn_default_size"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toBottomOf="@id/root_layout"
-        app:layout_constraintEnd_toEndOf="@id/root_layout"
-        app:layout_constraintStart_toStartOf="@id/root_layout" />
+  <ImageView
+    android:id="@+id/iv_focus"
+    android:layout_width="@dimen/btn_default_size"
+    android:layout_height="@dimen/btn_default_size"
+    android:layout_marginBottom="20dp"
+    app:layout_constraintBottom_toBottomOf="@id/root_layout"
+    app:layout_constraintEnd_toEndOf="@id/root_layout"
+    app:layout_constraintStart_toStartOf="@id/root_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
