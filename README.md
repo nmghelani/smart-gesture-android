@@ -59,7 +59,7 @@ view.setOnTouchListener(gestureListener);
 
 That's it. You've added a smart gesture dialog with beautiful UI and feel of 3D touch.  
 
-NOTE: 
+**NOTE:**
 - The view with this touch listener should be a direct child of rootLayout or its parent should cover whole screen or else the touch event will be cancelled and so the dialog will get dissmissed.
 - You can add upto 5 buttons.
 
