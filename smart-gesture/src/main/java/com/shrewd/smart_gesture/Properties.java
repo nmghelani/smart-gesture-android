@@ -20,12 +20,13 @@ public class Properties {
     private int backgroundColor, selectedButtonTint, nonSelectedButtonTint;
     private Drawable selectedButtonDrawable, nonSelectedButtonDrawable;
     private float horizontalOffset, verticalOffset, textVerticalOffset, textHorizontalOffset, verticalTouchAdjust, horizontalTouchAdjust;
-    private boolean textEnabled, animationEnabled, titleBold;
+    private boolean textEnabled, animationEnabled, titleBold, showDefault;
     private int textGravity;
     private Typeface typeface;
     private long delay, animationTime;
     private float btnSpacingOffset;
     private int bgAlpha;
+    private String defaultTitle, defaultDescription;
 
     private final static MutableLiveData<Integer> MIN_RADIUS = new MutableLiveData<>();
     private final static MutableLiveData<Integer> MAX_RADIUS = new MutableLiveData<>();
@@ -55,12 +56,15 @@ public class Properties {
         textEnabled = builder.textEnabled;
         animationEnabled = builder.animationEnabled;
         titleBold = builder.titleBold;
+        showDefault = builder.showDefault;
         textGravity = builder.textGravity;
         typeface = builder.typeface;
         delay = builder.delay;
         animationTime = builder.animationTime;
         btnSpacingOffset = builder.btnSpacingOffset;
         bgAlpha = builder.bgAlpha;
+        defaultTitle = builder.defaultTitle;
+        defaultDescription = builder.defaultDescription;
 
         if (!builder.MIN_RADIUS.hasActiveObservers()) {
             builder.MIN_RADIUS.observe((LifecycleOwner) mContext, MIN_RADIUS::setValue);
@@ -147,12 +151,24 @@ public class Properties {
         }
     }
 
+    public String getDefaultTitle() {
+        return defaultTitle;
+    }
+
+    public String getDefaultDescription() {
+        return defaultDescription;
+    }
+
     public int getTitleSize() {
         return titleSize;
     }
 
     public int getDescriptionSize() {
         return descriptionSize;
+    }
+
+    public boolean isShowDefault() {
+        return showDefault;
     }
 
     public boolean isTitleBold() {
@@ -221,6 +237,7 @@ public class Properties {
 
     public static class Builder {
         private static final String TAG = Builder.class.getName();
+        public String defaultTitle, defaultDescription;
         private Context mContext;
         private int radius, titleSize, descriptionSize;
         private MutableLiveData<Integer> btnSize = new MutableLiveData<>();
@@ -228,7 +245,7 @@ public class Properties {
         private int bgColor, selectedButtonTint, nonSelectedButtonTint;
         private Drawable selectedButtonDrawable, nonSelectedButtonDrawable;
         private float horizontalOffset, verticalOffset, textVerticalOffset, textHorizontalOffset, verticalTouchOffset, horizontalTouchOffset;
-        private boolean textEnabled, animationEnabled, titleBold;
+        private boolean textEnabled, animationEnabled, titleBold, showDefault;
         private int textGravity;
         private Typeface typeface;
         private long delay, animationTime;
@@ -282,6 +299,7 @@ public class Properties {
             textEnabled = true;
             animationEnabled = true;
             titleBold = true;
+            showDefault = false;
             delay = 500;
             animationTime = 100;
             textGravity = Gravity.START;
@@ -290,6 +308,13 @@ public class Properties {
             titleSize = 25;
             descriptionSize = 17;
             bgAlpha = 127;
+            defaultTitle = mContext.getString(R.string.default_title);
+            defaultDescription = mContext.getString(R.string.default_description);
+        }
+
+        public Builder setShowDefaultTextOnNotHovered(boolean showDefault) {
+            this.showDefault = showDefault;
+            return this;
         }
 
         public Builder setRadius(int dp) {
@@ -299,6 +324,16 @@ public class Properties {
 
         public Builder setBtnSize(int dp) {
             this.btnSize.setValue(SmartGestureUtils.dpToPx(dp, mContext));
+            return this;
+        }
+
+        public Builder setDefaultTitle(String defaultTitle) {
+            this.defaultTitle = defaultTitle;
+            return this;
+        }
+
+        public Builder setDefaultDescription(String defaultDescription) {
+            this.defaultDescription = defaultDescription;
             return this;
         }
 

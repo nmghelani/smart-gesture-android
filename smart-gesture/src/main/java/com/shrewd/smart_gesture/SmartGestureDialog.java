@@ -1,5 +1,6 @@
 package com.shrewd.smart_gesture;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -73,6 +74,15 @@ public class SmartGestureDialog extends Dialog {
         Rect frame = new Rect();
         ((Activity) mContext).getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
 
+        binding.tvTitle.setText(properties.getDefaultTitle());
+        binding.tvDescription.setText(properties.getDefaultDescription());
+        if (properties.isAnimationEnabled()) {
+            binding.tvTitle.setAlpha(0);
+            binding.tvDescription.setAlpha(0);
+            binding.tvTitle.animate().alpha(1).setDuration(properties.getAnimationTime() * 2).start();
+            binding.tvDescription.animate().alpha(1).setDuration(properties.getAnimationTime() * 2).start();
+        }
+
         int focusId = binding.ivFocus.getId();
 
         boolean isEvenNoOfBtn = isEven(buttonList.size());
@@ -91,6 +101,8 @@ public class SmartGestureDialog extends Dialog {
                 imageView.setElevation(10);
                 imageView.setImageTintList(ColorStateList.valueOf(properties.getNonSelectedButtonTint()));
             }
+            float defaultTranslationX = imageView.getTranslationX();
+            float defaultTranslationY = imageView.getTranslationY();
             ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(properties.getBtnSize(), properties.getBtnSize());
             if (i == 0) {
                 params.startToStart = focusId;
@@ -107,6 +119,7 @@ public class SmartGestureDialog extends Dialog {
                     params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 6)) - properties.getBtnSize());
                     params.bottomMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 6)) - properties.getBtnSize());
                 }
+                imageView.setTranslationX(defaultTranslationX + params.rightMargin);
             } else if (i == 2) {
                 params.startToEnd = focusId;
                 params.bottomToTop = focusId;
@@ -117,6 +130,7 @@ public class SmartGestureDialog extends Dialog {
                     params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 6)) - properties.getBtnSize());
                     params.bottomMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 6)) - properties.getBtnSize());
                 }
+                imageView.setTranslationX(defaultTranslationX - params.leftMargin);
             } else if (i == 3) {
                 params.endToStart = focusId;
                 params.bottomToTop = focusId;
@@ -127,6 +141,7 @@ public class SmartGestureDialog extends Dialog {
                     params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 3)) - properties.getBtnSize());
                     params.bottomMargin = (int) (properties.getRadius() * Math.cos(Math.PI / 3) - properties.getBtnSize());
                 }
+                imageView.setTranslationX(defaultTranslationX + params.rightMargin);
             } else if (i == 4) {
                 params.startToEnd = focusId;
                 params.bottomToTop = focusId;
@@ -137,15 +152,22 @@ public class SmartGestureDialog extends Dialog {
                     params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 3)) - properties.getBtnSize());
                     params.bottomMargin = (int) (properties.getRadius() * Math.cos(Math.PI / 3) - properties.getBtnSize());
                 }
+                imageView.setTranslationX(defaultTranslationX - params.leftMargin);
             }
             if (isEvenNoOfBtn) {
                 params.bottomMargin -= (int) ((properties.getRadius() * Math.sin(Math.PI / 8)) - properties.getBtnSize());
             } else {
                 params.bottomMargin -= (int) (properties.getRadius() * Math.cos(Math.PI / 3) - properties.getBtnSize());
             }
+            imageView.setTranslationY(defaultTranslationY + params.bottomMargin);
             imageView.setBackground(properties.getNonSelectedButtonDrawable());
             imageView.setLayoutParams(params);
             binding.rootLayout.addView(imageView);
+            imageView.animate()
+                .translationX(defaultTranslationX)
+                .translationY(defaultTranslationY)
+                .setDuration(properties.isAnimationEnabled() ? properties.getAnimationTime() * 2 : 0)
+                .start();
         }
 
         Window window = getWindow();
@@ -327,8 +349,8 @@ public class SmartGestureDialog extends Dialog {
             lastSelected.setScaleX(1);
             lastSelected.setScaleY(1);
         }
-        binding.tvTitle.setText("");
-        binding.tvDescription.setText("");
+        binding.tvTitle.setText(properties.isShowDefault() ? properties.getDefaultTitle() : "");
+        binding.tvDescription.setText(properties.isShowDefault() ? properties.getDefaultDescription() : "");
         lastSelected = null;
     }
 
