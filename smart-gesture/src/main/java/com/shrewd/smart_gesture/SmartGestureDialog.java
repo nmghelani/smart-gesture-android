@@ -5,8 +5,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -32,6 +34,7 @@ public class SmartGestureDialog extends Dialog {
     private final Context mContext;
     private View touchedView;
     private View lastSelected;
+    private boolean isStillDown = false, isGestureRunning = false;
 
     public SmartGestureDialog(@NonNull Context mContext, List<GestureButton> buttonList) {
         super(mContext);
@@ -61,10 +64,10 @@ public class SmartGestureDialog extends Dialog {
         this.touchedView = touchedView;
     }
 
-    private void initDialog() {
+    private void initDialog(MotionEvent event) {
         binding = DgSmartGestureBinding.inflate(LayoutInflater.from(mContext));
         setContentView(binding.getRoot());
-        setFocusView();
+        setFocusView(event);
         repositionDescriptionView();
         Rect frame = new Rect();
         ((Activity) mContext).getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
@@ -92,45 +95,52 @@ public class SmartGestureDialog extends Dialog {
                 params.startToStart = focusId;
                 params.endToEnd = focusId;
                 params.bottomToTop = focusId;
-                params.bottomMargin = properties.getRadius();
+                params.bottomMargin = properties.getRadius() - properties.getBtnSize();
             } else if (i == 1) {
                 params.endToStart = focusId;
                 params.bottomToTop = focusId;
                 if (isEvenNoOfBtn) {
-                    params.rightMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 8)) - properties.getBtnSize());
+                    params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 8)) - properties.getBtnSize());
                     params.bottomMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 8)) - properties.getBtnSize());
                 } else {
-                    params.rightMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 4)) - properties.getBtnSize());
-                    params.bottomMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 4)));
+                    params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 6)) - properties.getBtnSize());
+                    params.bottomMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 6)) - properties.getBtnSize());
                 }
             } else if (i == 2) {
                 params.startToEnd = focusId;
                 params.bottomToTop = focusId;
                 if (isEvenNoOfBtn) {
-                    params.leftMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 8)) - properties.getBtnSize());
+                    params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 8)) - properties.getBtnSize());
                     params.bottomMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 8)) - properties.getBtnSize());
                 } else {
-                    params.leftMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 4)) - properties.getBtnSize());
-                    params.bottomMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 4)));
+                    params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 6)) - properties.getBtnSize());
+                    params.bottomMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 6)) - properties.getBtnSize());
                 }
             } else if (i == 3) {
                 params.endToStart = focusId;
                 params.bottomToTop = focusId;
                 if (isEvenNoOfBtn) {
-                    params.rightMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 8)) - properties.getBtnSize());
+                    params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.cos(Math.PI / 8)) - properties.getBtnSize());
                     params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 8)) - properties.getBtnSize());
                 } else {
-                    params.rightMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 2)) - properties.getBtnSize());
+                    params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 3)) - properties.getBtnSize());
+                    params.bottomMargin = (int) (properties.getRadius() * Math.cos(Math.PI / 3) - properties.getBtnSize());
                 }
             } else if (i == 4) {
                 params.startToEnd = focusId;
                 params.bottomToTop = focusId;
                 if (isEvenNoOfBtn) {
-                    params.leftMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 8)) - properties.getBtnSize());
+                    params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.cos(Math.PI / 8)) - properties.getBtnSize());
                     params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 8)) - properties.getBtnSize());
                 } else {
-                    params.leftMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 2)) - properties.getBtnSize());
+                    params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 3)) - properties.getBtnSize());
+                    params.bottomMargin = (int) (properties.getRadius() * Math.cos(Math.PI / 3) - properties.getBtnSize());
                 }
+            }
+            if (isEvenNoOfBtn) {
+                params.bottomMargin -= (int) ((properties.getRadius() * Math.sin(Math.PI / 8)) - properties.getBtnSize());
+            } else {
+                params.bottomMargin -= (int) (properties.getRadius() * Math.cos(Math.PI / 3) - properties.getBtnSize());
             }
             imageView.setBackground(properties.getNonSelectedButtonDrawable());
             imageView.setLayoutParams(params);
@@ -148,25 +158,6 @@ public class SmartGestureDialog extends Dialog {
         }
     }
 
-    @Override
-    public void show() {
-        initDialog();
-        super.show();
-        binding.rootLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < binding.rootLayout.getChildCount(); i++) {
-                    View view = binding.rootLayout.getChildAt(i);
-                    if (view instanceof ImageView && view != binding.ivFocus) {
-                        Rect rect = new Rect();
-                        view.getHitRect(rect);
-                        Log.d(TAG, "show: " + view.getX() + " " + view.getY() + " " + rect.left + " " + rect.top);
-                    }
-                }
-            }
-        }, 1000);
-    }
-
     private void repositionDescriptionView() {
         if (properties.isTextEnabled()) {
             binding.tvTitle.setVisibility(View.VISIBLE);
@@ -179,7 +170,7 @@ public class SmartGestureDialog extends Dialog {
             descriptionParams.leftMargin = (int) properties.getTextHorizontalOffset();
             binding.tvDescription.requestLayout();
 
-            binding.tvTitle.setTypeface(properties.getTypeface());
+            binding.tvTitle.setTypeface(properties.getTypeface(), properties.isTitleBold() ? Typeface.BOLD : Typeface.NORMAL);
             binding.tvDescription.setTypeface(properties.getTypeface());
 
             binding.tvTitle.setGravity(properties.getTextGravity());
@@ -194,22 +185,19 @@ public class SmartGestureDialog extends Dialog {
         }
     }
 
-    private void setFocusView() {
+    private void setFocusView(MotionEvent event) {
         ConstraintLayout.LayoutParams focusParams = (ConstraintLayout.LayoutParams) binding.ivFocus.getLayoutParams();
-        focusParams.height = properties.getBtnSize();
+        focusParams.height = 0;
         focusParams.width = properties.getBtnSize();
         focusParams.startToStart = binding.rootLayout.getId();
         focusParams.endToEnd = binding.rootLayout.getId();
         focusParams.bottomToBottom = binding.rootLayout.getId();
-        int[] coords = {0, 0};
-        touchedView.getLocationInWindow(coords);
         int bottomMargin = (int) (SmartGestureUtils.getScreenHeightPixels(mContext)
-                - coords[1]
-                - SmartGestureUtils.getActionBarHeight(mContext)
-                - SmartGestureUtils.getStatusBarHeight(mContext)
+                - event.getRawY()
                 - properties.getVerticalOffset());
         int minHeight = (SmartGestureUtils.dpToPx(250, mContext) + properties.getRadius());
-        if (minHeight < coords[1]) {
+        Log.d(TAG, "setFocusView: " + SmartGestureUtils.getScreenHeightPixels(mContext) + " " + event.getRawY() + " " + bottomMargin + " " + minHeight);
+        if (minHeight < event.getRawY()) {
             if (bottomMargin > 0) {
                 focusParams.bottomMargin = bottomMargin;
             } else {
@@ -240,7 +228,18 @@ public class SmartGestureDialog extends Dialog {
     public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                smartGestureCallBack.onGestureStarted();
+                isStillDown = true;
+                isGestureRunning = true;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isStillDown) {
+                            initDialog(event);
+                            show();
+                            smartGestureCallBack.onGestureStarted();
+                        }
+                    }
+                }, properties.getDelay());
                 break;
             case MotionEvent.ACTION_MOVE:
                 int rectX = (int) (event.getRawX() + properties.getHorizontalTouchAdjust());
@@ -260,6 +259,13 @@ public class SmartGestureDialog extends Dialog {
                     }
                 }
                 onDeselected();
+                break;
+            case MotionEvent.ACTION_UP:
+                if (isGestureRunning) {
+                    dismiss();
+                }
+                isStillDown = false;
+                isGestureRunning = false;
                 break;
         }
         return true;

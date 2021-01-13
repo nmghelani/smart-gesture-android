@@ -34,26 +34,8 @@ public class SmartGestureListener implements View.OnTouchListener {
     public boolean onTouch(View view, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                isStillDown = true;
-                isGestureRunning = true;
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isStillDown) {
-                            dialog.setTouchedView(view);
-                            dialog.updateList(buttonList);
-                            dialog.show();
-                        }
-                    }
-                }, delay);
-                break;
-            case MotionEvent.ACTION_CANCEL:
-            case MotionEvent.ACTION_UP:
-                if (isGestureRunning && dialog != null) {
-                    dialog.dismiss();
-                }
-                isStillDown = false;
-                isGestureRunning = false;
+                dialog.setTouchedView(view);
+                dialog.updateList(buttonList);
                 break;
         }
         if (dialog != null) {

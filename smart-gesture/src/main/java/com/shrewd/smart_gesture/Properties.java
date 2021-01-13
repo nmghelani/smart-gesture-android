@@ -20,10 +20,11 @@ public class Properties {
     private int backgroundColor, selectedButtonTint, nonSelectedButtonTint;
     private Drawable selectedButtonDrawable, nonSelectedButtonDrawable;
     private float horizontalOffset, verticalOffset, textVerticalOffset, textHorizontalOffset, verticalTouchAdjust, horizontalTouchAdjust;
-    private boolean textEnabled, animationEnabled;
+    private boolean textEnabled, animationEnabled, titleBold;
     private int textGravity;
     private Typeface typeface;
     private long delay, animationTime;
+    private float btnSpacingOffset;
 
     private final static MutableLiveData<Integer> MIN_RADIUS = new MutableLiveData<>();
     private final static MutableLiveData<Integer> MAX_RADIUS = new MutableLiveData<>();
@@ -50,15 +51,25 @@ public class Properties {
         verticalTouchAdjust = builder.verticalTouchOffset;
         textEnabled = builder.textEnabled;
         animationEnabled = builder.animationEnabled;
+        titleBold = builder.titleBold;
         textGravity = builder.textGravity;
         typeface = builder.typeface;
         delay = builder.delay;
         animationTime = builder.animationTime;
-        builder.MIN_RADIUS.observe((LifecycleOwner) mContext, MIN_RADIUS::setValue);
-        builder.MAX_RADIUS.observe((LifecycleOwner) mContext, MAX_RADIUS::setValue);
+        btnSpacingOffset = builder.btnSpacingOffset;
+        if (!builder.MIN_RADIUS.hasActiveObservers()) {
+            builder.MIN_RADIUS.observe((LifecycleOwner) mContext, MIN_RADIUS::setValue);
+        }
+        if (!builder.MIN_RADIUS.hasActiveObservers()) {
+            builder.MAX_RADIUS.observe((LifecycleOwner) mContext, MAX_RADIUS::setValue);
+        }
 
-        MIN_RADIUS.observe((LifecycleOwner) mContext, integer -> Log.d(TAG, "onChanged: Min radius " + integer));
-        MAX_RADIUS.observe((LifecycleOwner) mContext, integer -> Log.d(TAG, "onChanged: Max radius " + integer));
+        if (!MIN_RADIUS.hasActiveObservers()) {
+            MIN_RADIUS.observe((LifecycleOwner) mContext, integer -> Log.d(TAG, "onChanged: Min radius " + integer));
+        }
+        if (!MAX_RADIUS.hasActiveObservers()) {
+            MAX_RADIUS.observe((LifecycleOwner) mContext, integer -> Log.d(TAG, "onChanged: Max radius " + integer));
+        }
     }
 
     public static LiveData<Integer> getLiveMinRadius() {
@@ -79,6 +90,10 @@ public class Properties {
 
     public boolean isAnimationEnabled() {
         return animationEnabled;
+    }
+
+    public float getBtnSpacingOffset() {
+        return btnSpacingOffset;
     }
 
     public long getAnimationTime() {
@@ -121,6 +136,10 @@ public class Properties {
         } else {
             return btnSize;
         }
+    }
+
+    public boolean isTitleBold() {
+        return titleBold;
     }
 
     public Integer getButtonPadding() {
@@ -192,10 +211,11 @@ public class Properties {
         private int bgColor, selectedButtonTint, nonSelectedButtonTint;
         private Drawable selectedButtonDrawable, nonSelectedButtonDrawable;
         private float horizontalOffset, verticalOffset, textVerticalOffset, textHorizontalOffset, verticalTouchOffset, horizontalTouchOffset;
-        private boolean textEnabled, animationEnabled;
+        private boolean textEnabled, animationEnabled, titleBold;
         private int textGravity;
         private Typeface typeface;
         private long delay, animationTime;
+        private float btnSpacingOffset;
 
         private final MutableLiveData<Integer> MIN_RADIUS = new MutableLiveData<>();
         private final MutableLiveData<Integer> MAX_RADIUS = new MutableLiveData<>();
@@ -203,27 +223,29 @@ public class Properties {
         public Builder(Context mContext) {
             this.mContext = mContext;
 
-            btnSize.observe((LifecycleOwner) mContext, newSize -> {
-                if (newSize == null)
-                    return;
-                int minSize = mContext.getResources().getDimensionPixelSize(R.dimen.min_size);
-                int maxSize = mContext.getResources().getDimensionPixelSize(R.dimen.max_size);
-                if (newSize < minSize) {
-                    newSize = minSize;
-                    Log.e("SizeConstraint", "Size is less than minimum size. (New size is: " + newSize + ")");
-                } else if (newSize > maxSize) {
-                    newSize = maxSize;
-                    Log.e("SizeConstraint", "Size is greater than maximum size. (New size is: " + newSize + ")");
-                }
-                int min = (int) (newSize * 2.5f);
-                int max = (int) (SmartGestureUtils.getScreenWidthPixels(mContext) / 2f - newSize);
-                if (min > max) {
-                    min = max;
-                }
-                MIN_RADIUS.setValue(min);
-                MAX_RADIUS.setValue(max);
-                Log.d(TAG, "Builder: btnSize changed: ");
-            });
+            if (!btnSize.hasActiveObservers()) {
+                btnSize.observe((LifecycleOwner) mContext, newSize -> {
+                    if (newSize == null)
+                        return;
+                    int minSize = mContext.getResources().getDimensionPixelSize(R.dimen.min_size);
+                    int maxSize = mContext.getResources().getDimensionPixelSize(R.dimen.max_size);
+                    if (newSize < minSize) {
+                        newSize = minSize;
+                        Log.e("SizeConstraint", "Size is less than minimum size. (New size is: " + newSize + ")");
+                    } else if (newSize > maxSize) {
+                        newSize = maxSize;
+                        Log.e("SizeConstraint", "Size is greater than maximum size. (New size is: " + newSize + ")");
+                    }
+                    int min = (int) (newSize * 2.5f);
+                    int max = (int) (SmartGestureUtils.getScreenWidthPixels(mContext) / 2f - newSize);
+                    if (min > max) {
+                        min = max;
+                    }
+                    MIN_RADIUS.setValue(min);
+                    MAX_RADIUS.setValue(max);
+                    Log.d(TAG, "Builder: btnSize changed: ");
+                });
+            }
 
             btnSize.setValue(mContext.getResources().getDimensionPixelSize(R.dimen.btn_default_size));
             radius = mContext.getResources().getDimensionPixelSize(R.dimen.default_radius);
@@ -241,10 +263,12 @@ public class Properties {
             verticalTouchOffset = 0;
             textEnabled = true;
             animationEnabled = true;
+            titleBold = true;
             delay = 500;
             animationTime = 100;
             textGravity = Gravity.START;
             typeface = Typeface.DEFAULT;
+            btnSpacingOffset = 0;
         }
 
         public Builder setRadius(int dp) {
@@ -262,8 +286,21 @@ public class Properties {
             return this;
         }
 
+        /**
+         * spacing will be radius * perc
+         * */
+        public Builder setBtnSpacingOffset(float perc) {
+            this.btnSpacingOffset = perc;
+            return this;
+        }
+
         public Builder setAnimationEnabled(boolean animationEnabled) {
             this.animationEnabled = animationEnabled;
+            return this;
+        }
+
+        public Builder setTitleBold(boolean titleBold) {
+            this.titleBold = titleBold;
             return this;
         }
 
