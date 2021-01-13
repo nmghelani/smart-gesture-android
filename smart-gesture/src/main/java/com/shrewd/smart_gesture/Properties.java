@@ -25,6 +25,7 @@ public class Properties {
     private Typeface typeface;
     private long delay, animationTime;
     private float btnSpacingOffset;
+    private int bgAlpha;
 
     private final static MutableLiveData<Integer> MIN_RADIUS = new MutableLiveData<>();
     private final static MutableLiveData<Integer> MAX_RADIUS = new MutableLiveData<>();
@@ -59,6 +60,8 @@ public class Properties {
         delay = builder.delay;
         animationTime = builder.animationTime;
         btnSpacingOffset = builder.btnSpacingOffset;
+        bgAlpha = builder.bgAlpha;
+
         if (!builder.MIN_RADIUS.hasActiveObservers()) {
             builder.MIN_RADIUS.observe((LifecycleOwner) mContext, MIN_RADIUS::setValue);
         }
@@ -112,6 +115,10 @@ public class Properties {
 
     public int getMaxSize() {
         return mContext.getResources().getDimensionPixelSize(R.dimen.max_size);
+    }
+
+    public int getBgAlpha() {
+        return bgAlpha;
     }
 
     public int getRadius() {
@@ -226,6 +233,7 @@ public class Properties {
         private Typeface typeface;
         private long delay, animationTime;
         private float btnSpacingOffset;
+        private int bgAlpha;
 
         private final MutableLiveData<Integer> MIN_RADIUS = new MutableLiveData<>();
         private final MutableLiveData<Integer> MAX_RADIUS = new MutableLiveData<>();
@@ -281,6 +289,7 @@ public class Properties {
             btnSpacingOffset = 0;
             titleSize = 25;
             descriptionSize = 17;
+            bgAlpha = 127;
         }
 
         public Builder setRadius(int dp) {
@@ -300,6 +309,16 @@ public class Properties {
 
         public Builder setDescriptionSize(int sp) {
             this.descriptionSize = sp;
+            return this;
+        }
+
+        public Builder setBgAlpha(@IntRange(from = 0, to = 255) int alpha) {
+            if (alpha < 0) {
+                alpha = 0;
+            } else if (alpha > 255) {
+                alpha = 255;
+            }
+            this.bgAlpha = alpha;
             return this;
         }
 

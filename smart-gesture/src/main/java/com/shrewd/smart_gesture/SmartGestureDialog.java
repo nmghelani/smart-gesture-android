@@ -150,7 +150,9 @@ public class SmartGestureDialog extends Dialog {
 
         Window window = getWindow();
         if (window != null) {
-            window.setBackgroundDrawable(new ColorDrawable(properties.getBackgroundColor()));
+            ColorDrawable background = new ColorDrawable(properties.getBackgroundColor());
+            background.setAlpha(properties.getBgAlpha());
+            window.setBackgroundDrawable(background);
             window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             WindowManager.LayoutParams params = window.getAttributes();
             params.width = WindowManager.LayoutParams.MATCH_PARENT;

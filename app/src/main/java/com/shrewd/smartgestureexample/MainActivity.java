@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 .setSelectedButtonDrawableResId(R.drawable.bg_hovered)
                 .setSelectedButtonTintResId(R.color.white)
                 .setTextVerticalOffset(50)
+                .setBgAlpha(0)
                 .setTypeface(Typeface.MONOSPACE)
                 .setTextGravity(Gravity.CENTER)
                 .setDelay(100)
