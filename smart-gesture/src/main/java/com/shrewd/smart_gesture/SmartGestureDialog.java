@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -156,6 +157,9 @@ public class SmartGestureDialog extends Dialog {
             params.height = WindowManager.LayoutParams.MATCH_PARENT;
             window.setAttributes(params);
         }
+
+        binding.tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, properties.getTitleSize());
+        binding.tvDescription.setTextSize(TypedValue.COMPLEX_UNIT_SP, properties.getDescriptionSize());
     }
 
     private void repositionDescriptionView() {

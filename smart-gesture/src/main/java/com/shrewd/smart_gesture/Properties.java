@@ -15,7 +15,7 @@ import androidx.lifecycle.MutableLiveData;
 public class Properties {
     private static final String TAG = Properties.class.getName();
     private Context mContext;
-    private int radius, btnSize;
+    private int radius, btnSize, titleSize, descriptionSize;
     private Integer buttonPadding;
     private int backgroundColor, selectedButtonTint, nonSelectedButtonTint;
     private Drawable selectedButtonDrawable, nonSelectedButtonDrawable;
@@ -37,6 +37,8 @@ public class Properties {
         this.mContext = builder.mContext;
         radius = builder.radius;
         btnSize = builder.btnSize.getValue();
+        titleSize = builder.titleSize;
+        descriptionSize = builder.descriptionSize;
         buttonPadding = btnSize * builder.btnPaddingPerc / 100;
         backgroundColor = builder.bgColor;
         selectedButtonTint = builder.selectedButtonTint;
@@ -138,6 +140,14 @@ public class Properties {
         }
     }
 
+    public int getTitleSize() {
+        return titleSize;
+    }
+
+    public int getDescriptionSize() {
+        return descriptionSize;
+    }
+
     public boolean isTitleBold() {
         return titleBold;
     }
@@ -205,7 +215,7 @@ public class Properties {
     public static class Builder {
         private static final String TAG = Builder.class.getName();
         private Context mContext;
-        private int radius;
+        private int radius, titleSize, descriptionSize;
         private MutableLiveData<Integer> btnSize = new MutableLiveData<>();
         private int btnPaddingPerc;
         private int bgColor, selectedButtonTint, nonSelectedButtonTint;
@@ -269,6 +279,8 @@ public class Properties {
             textGravity = Gravity.START;
             typeface = Typeface.DEFAULT;
             btnSpacingOffset = 0;
+            titleSize = 25;
+            descriptionSize = 17;
         }
 
         public Builder setRadius(int dp) {
@@ -278,6 +290,16 @@ public class Properties {
 
         public Builder setBtnSize(int dp) {
             this.btnSize.setValue(SmartGestureUtils.dpToPx(dp, mContext));
+            return this;
+        }
+
+        public Builder setTitleSize(int sp) {
+            this.titleSize = sp;
+            return this;
+        }
+
+        public Builder setDescriptionSize(int sp) {
+            this.descriptionSize = sp;
             return this;
         }
 
