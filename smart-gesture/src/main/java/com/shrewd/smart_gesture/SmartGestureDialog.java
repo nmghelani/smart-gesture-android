@@ -38,11 +38,11 @@ public class SmartGestureDialog extends Dialog {
     private View lastSelected;
     private boolean isStillDown = false, isGestureRunning = false;
 
-    public SmartGestureDialog(@NonNull Context mContext, List<GestureButton> buttonList) {
+    public SmartGestureDialog(@NonNull Context mContext, List<GestureButton> buttonList, Properties properties) {
         super(mContext);
         this.mContext = mContext;
         this.buttonList = buttonList;
-        properties = new Properties(mContext);
+        this.properties = properties;
     }
 
     public void setProperties(Properties properties) {

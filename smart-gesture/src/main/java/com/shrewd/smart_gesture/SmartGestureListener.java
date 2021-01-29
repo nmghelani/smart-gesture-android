@@ -1,7 +1,6 @@
 package com.shrewd.smart_gesture;
 
 import android.content.Context;
-import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -11,18 +10,16 @@ public class SmartGestureListener implements View.OnTouchListener {
 
     private final Context mContext;
     private final List<GestureButton> buttonList;
-    private boolean isStillDown = false, isGestureRunning = false;
     private SmartGestureDialog dialog;
-    private long delay;
 
-    public SmartGestureListener(Context mContext, List<GestureButton> buttonList) {
+    public SmartGestureListener(Context mContext, List<GestureButton> buttonList, Properties properties) {
         this.mContext = mContext;
         this.buttonList = buttonList;
-        dialog = new SmartGestureDialog(mContext, buttonList);
+        dialog = new SmartGestureDialog(mContext, buttonList, properties);
     }
 
     public void setProperties(Properties properties) {
-        delay = properties.getDelay();
+        properties.getBuilder().setMinMax();
         dialog.setProperties(properties);
     }
 

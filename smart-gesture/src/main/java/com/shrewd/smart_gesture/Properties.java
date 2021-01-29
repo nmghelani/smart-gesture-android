@@ -11,10 +11,12 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 public class Properties {
     private static final String TAG = Properties.class.getName();
     private Context mContext;
+    private Builder builder;
     private int radius, btnSize, titleSize, descriptionSize;
     private Integer buttonPadding;
     private int backgroundColor, selectedButtonTint, nonSelectedButtonTint;
@@ -28,8 +30,8 @@ public class Properties {
     private int bgAlpha;
     private String defaultTitle, defaultDescription;
 
-    private final static MutableLiveData<Integer> MIN_RADIUS = new MutableLiveData<>();
-    private final static MutableLiveData<Integer> MAX_RADIUS = new MutableLiveData<>();
+    private final MutableLiveData<Integer> MIN_RADIUS = new MutableLiveData<>();
+    private final MutableLiveData<Integer> MAX_RADIUS = new MutableLiveData<>();
 
     public Properties(Context mContext) {
         this(new Builder(mContext));
@@ -37,6 +39,7 @@ public class Properties {
 
     public Properties(Builder builder) {
         this.mContext = builder.mContext;
+        this.builder = builder;
         radius = builder.radius;
         btnSize = builder.btnSize.getValue();
         titleSize = builder.titleSize;
@@ -66,34 +69,45 @@ public class Properties {
         defaultTitle = builder.defaultTitle;
         defaultDescription = builder.defaultDescription;
 
-        if (!builder.MIN_RADIUS.hasActiveObservers()) {
-            builder.MIN_RADIUS.observe((LifecycleOwner) mContext, MIN_RADIUS::setValue);
-        }
-        if (!builder.MIN_RADIUS.hasActiveObservers()) {
-            builder.MAX_RADIUS.observe((LifecycleOwner) mContext, MAX_RADIUS::setValue);
-        }
+        builder.MIN_RADIUS.removeObservers((LifecycleOwner) mContext);
+        builder.MIN_RADIUS.observe((LifecycleOwner) mContext, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                MIN_RADIUS.setValue(integer);
+            }
+        });
+        builder.MAX_RADIUS.removeObservers((LifecycleOwner) mContext);
+        builder.MAX_RADIUS.observe((LifecycleOwner) mContext, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                MAX_RADIUS.setValue(integer);
+            }
+        });
 
-        if (!MIN_RADIUS.hasActiveObservers()) {
-            MIN_RADIUS.observe((LifecycleOwner) mContext, integer -> Log.d(TAG, "onChanged: Min radius " + integer));
-        }
-        if (!MAX_RADIUS.hasActiveObservers()) {
-            MAX_RADIUS.observe((LifecycleOwner) mContext, integer -> Log.d(TAG, "onChanged: Max radius " + integer));
-        }
+        MIN_RADIUS.removeObservers((LifecycleOwner) mContext);
+        MIN_RADIUS.observe((LifecycleOwner) mContext, integer -> Log.d(TAG, "onChanged: Min radius " + integer));
+
+        MAX_RADIUS.removeObservers((LifecycleOwner) mContext);
+        MAX_RADIUS.observe((LifecycleOwner) mContext, integer -> Log.d(TAG, "onChanged: Max radius " + integer));
     }
 
-    public static LiveData<Integer> getLiveMinRadius() {
+    public Builder getBuilder() {
+        return builder;
+    }
+
+    public LiveData<Integer> getLiveMinRadius() {
         return MIN_RADIUS;
     }
 
-    public static LiveData<Integer> getLiveMaxRadius() {
+    public LiveData<Integer> getLiveMaxRadius() {
         return MAX_RADIUS;
     }
 
-    public static int getMinRadius() {
+    public int getMinRadius() {
         return MIN_RADIUS.getValue();
     }
 
-    public static int getMaxRadius() {
+    public int getMaxRadius() {
         return MAX_RADIUS.getValue();
     }
 
@@ -259,25 +273,8 @@ public class Properties {
             this.mContext = mContext;
 
             if (!btnSize.hasActiveObservers()) {
-                btnSize.observe((LifecycleOwner) mContext, newSize -> {
-                    if (newSize == null)
-                        return;
-                    int minSize = mContext.getResources().getDimensionPixelSize(R.dimen.min_size);
-                    int maxSize = mContext.getResources().getDimensionPixelSize(R.dimen.max_size);
-                    if (newSize < minSize) {
-                        newSize = minSize;
-                        Log.e("SizeConstraint", "Size is less than minimum size. (New size is: " + newSize + ")");
-                    } else if (newSize > maxSize) {
-                        newSize = maxSize;
-                        Log.e("SizeConstraint", "Size is greater than maximum size. (New size is: " + newSize + ")");
-                    }
-                    int min = (int) (newSize * 2.5f);
-                    int max = (int) (SmartGestureUtils.getScreenWidthPixels(mContext) / 2f - newSize);
-                    if (min > max) {
-                        min = max;
-                    }
-                    MIN_RADIUS.setValue(min);
-                    MAX_RADIUS.setValue(max);
+            btnSize.observe((LifecycleOwner) mContext, newSize -> {
+                    setMinMax(newSize);
                     Log.d(TAG, "Builder: btnSize changed: ");
                 });
             }
@@ -310,6 +307,31 @@ public class Properties {
             bgAlpha = 127;
             defaultTitle = mContext.getString(R.string.default_title);
             defaultDescription = mContext.getString(R.string.default_description);
+        }
+
+        public void setMinMax() {
+            setMinMax(btnSize.getValue());
+        }
+
+        public void setMinMax(Integer newSize) {
+            if (newSize == null)
+                return;
+            int minSize = mContext.getResources().getDimensionPixelSize(R.dimen.min_size);
+            int maxSize = mContext.getResources().getDimensionPixelSize(R.dimen.max_size);
+            if (newSize < minSize) {
+                newSize = minSize;
+                Log.e("SizeConstraint", "Size is less than minimum size. (New size is: " + newSize + ")");
+            } else if (newSize > maxSize) {
+                newSize = maxSize;
+                Log.e("SizeConstraint", "Size is greater than maximum size. (New size is: " + newSize + ")");
+            }
+            int min = (int) (newSize * 2.5f);
+            int max = (int) (SmartGestureUtils.getScreenWidthPixels(mContext) / 2f - newSize);
+            if (min > max) {
+                min = max;
+            }
+            MIN_RADIUS.setValue(min);
+            MAX_RADIUS.setValue(max);
         }
 
         public Builder setShowDefaultTextOnNotHovered(boolean showDefault) {

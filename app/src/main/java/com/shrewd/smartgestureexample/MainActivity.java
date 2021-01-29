@@ -1,12 +1,12 @@
 package com.shrewd.smartgestureexample;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
@@ -31,11 +31,17 @@ public class MainActivity extends AppCompatActivity {
     private Properties.Builder propertyBuilder;
     private SmartGestureListener smartGestureListener;
     private Properties properties;
+//    private static boolean first = true;
 
     @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /*if (first) {
+            first = false;
+            finish();
+            startActivity(new Intent(this, MainActivity.class));
+        }*/
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setButtonList("5");
@@ -58,17 +64,16 @@ public class MainActivity extends AppCompatActivity {
                 .setNonSelectedButtonTintResId(R.color.white);
         properties = propertyBuilder.create();
 
-        Properties.getLiveMaxRadius().observe(this, integer -> {
-            binding.tvRadiusConstraints.setText("Radius (Min: " + Properties.getMinRadius() + ", Max: " + Properties.getMaxRadius() + ")");
+        properties.getLiveMaxRadius().observe(this, integer -> {
+            binding.tvRadiusConstraints.setText("Radius (Min: " + properties.getMinRadius() + ", Max: " + properties.getMaxRadius() + ")");
         });
-        Properties.getLiveMinRadius().observe(this, integer -> {
-            binding.tvRadiusConstraints.setText("Radius (Min: " + Properties.getMinRadius() + ", Max: " + Properties.getMaxRadius() + ")");
+        properties.getLiveMinRadius().observe(this, integer -> {
+            binding.tvRadiusConstraints.setText("Radius (Min: " + properties.getMinRadius() + ", Max: " + properties.getMaxRadius() + ")");
         });
 
         binding.tvSizeConstraints.setText("Size (Min: " + properties.getMinSize() + ", Max: " + properties.getMaxSize() + ")");
 
-        smartGestureListener = new SmartGestureListener(this, buttonArrayList);
-        smartGestureListener.setProperties(properties);
+        smartGestureListener = new SmartGestureListener(this, buttonArrayList, properties);
         smartGestureListener.setCallback(new SmartGestureCallBack() {
             @Override
             public void onSelected(int id) {
@@ -97,7 +102,13 @@ public class MainActivity extends AppCompatActivity {
         binding.sbSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                binding.tvSize.setText("Size (" + SmartGestureUtils.dpToPx(progress, MainActivity.this) + ")");
+                int px = SmartGestureUtils.dpToPx(progress, MainActivity.this);
+                if (px > 160) {
+                    binding.tvSize.setTextColor(Color.RED);
+                } else {
+                    binding.tvSize.setTextColor(getResources().getColor(android.R.color.secondary_text_dark));
+                }
+                binding.tvSize.setText("Size (" + px + ")");
                 propertyBuilder.setBtnSize(binding.sbSize.getProgress());
             }
 
