@@ -1,3 +1,8 @@
+> This project was created during my internship <a href="https://dcoder.tech/" target="_blank">@dcodermobile</a>
+<kbd><img src="https://play-lh.googleusercontent.com/PWUsRLZ8fawBOdTjMrSWwa6-EBpzOguNIlvqxepMRFmBD8eTq8UPGj2241I2qFF1Eg=s360-rw" width="28" height="28" /></kbd>.
+I am open sourcing it to give back to community. 
+> <br/><a href="https://play.google.com/store/apps/details?id=com.paprbit.dcoder" target="_blank">Download Dcoder app for Android</a>
+
 # Smart-gesture-android
 A fully customizable smart gesture in simplest way to give a feel like 3D touch in Android.
 
