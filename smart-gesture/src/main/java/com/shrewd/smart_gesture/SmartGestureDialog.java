@@ -162,7 +162,7 @@ public class SmartGestureDialog extends Dialog {
             imageView.setTranslationY(defaultTranslationY + params.bottomMargin);
             imageView.setBackground(properties.getNonSelectedButtonDrawable());
             imageView.setLayoutParams(params);
-            binding.rootLayout.addView(imageView);
+            binding.getRoot().addView(imageView);
             imageView.animate()
                 .translationX(defaultTranslationX)
                 .translationY(defaultTranslationY)
@@ -191,8 +191,8 @@ public class SmartGestureDialog extends Dialog {
             binding.tvTitle.setVisibility(View.VISIBLE);
             binding.tvDescription.setVisibility(View.VISIBLE);
             ConstraintLayout.LayoutParams descriptionParams = (ConstraintLayout.LayoutParams) binding.tvDescription.getLayoutParams();
-            descriptionParams.startToStart = binding.rootLayout.getId();
-            descriptionParams.endToEnd = binding.rootLayout.getId();
+            descriptionParams.startToStart = binding.getRoot().getId();
+            descriptionParams.endToEnd = binding.getRoot().getId();
             descriptionParams.bottomToTop = binding.ivFocus.getId();
             descriptionParams.bottomMargin = (int) (properties.getRadius() + (properties.getBtnSize()) + properties.getTextVerticalOffset());
             descriptionParams.leftMargin = (int) properties.getTextHorizontalOffset();
@@ -217,9 +217,9 @@ public class SmartGestureDialog extends Dialog {
         ConstraintLayout.LayoutParams focusParams = (ConstraintLayout.LayoutParams) binding.ivFocus.getLayoutParams();
         focusParams.height = 0;
         focusParams.width = properties.getBtnSize();
-        focusParams.startToStart = binding.rootLayout.getId();
-        focusParams.endToEnd = binding.rootLayout.getId();
-        focusParams.bottomToBottom = binding.rootLayout.getId();
+        focusParams.startToStart = binding.getRoot().getId();
+        focusParams.endToEnd = binding.getRoot().getId();
+        focusParams.bottomToBottom = binding.getRoot().getId();
         int bottomMargin = (int) (SmartGestureUtils.getScreenHeightPixels(mContext)
                 - event.getRawY()
                 - properties.getVerticalOffset());
@@ -238,8 +238,8 @@ public class SmartGestureDialog extends Dialog {
         int minWidth = (SmartGestureUtils.dpToPx(50, mContext) + (properties.getRadius() * 2));
         if (minWidth < SmartGestureUtils.getScreenWidthPixels(mContext)
                 - leftMargin
-                - binding.rootLayout.getPaddingLeft()
-                - binding.rootLayout.getPaddingRight()) {
+                - binding.getRoot().getPaddingLeft()
+                - binding.getRoot().getPaddingRight()) {
             if (leftMargin > 0) {
                 focusParams.leftMargin = leftMargin;
             } else {
@@ -274,8 +274,8 @@ public class SmartGestureDialog extends Dialog {
                 int rectY = (int) (event.getRawY()
                         + properties.getVerticalTouchAdjust());
 
-                for (int i = 0; i < binding.rootLayout.getChildCount(); i++) {
-                    View view = binding.rootLayout.getChildAt(i);
+                for (int i = 0; i < binding.getRoot().getChildCount(); i++) {
+                    View view = binding.getRoot().getChildAt(i);
                     if (view instanceof ImageView && view != binding.ivFocus) {
                         int[] co = {0, 0};
                         view.getLocationOnScreen(co);
