@@ -223,7 +223,7 @@ public class SmartGestureDialog extends Dialog {
         int bottomMargin = (int) (SmartGestureUtils.getScreenHeightPixels(mContext)
                 - event.getRawY()
                 - properties.getVerticalOffset());
-        int minHeight = (SmartGestureUtils.dpToPx(250, mContext) + properties.getRadius());
+        int minHeight = (SmartGestureUtils.dpToPx(mContext.getResources().getDimension(R.dimen._50sdp), mContext) + properties.getRadius());
         Log.d(TAG, "setFocusView: " + SmartGestureUtils.getScreenHeightPixels(mContext) + " " + event.getRawY() + " " + bottomMargin + " " + minHeight);
         if (minHeight < event.getRawY()) {
             if (bottomMargin > 0) {
@@ -232,22 +232,22 @@ public class SmartGestureDialog extends Dialog {
                 focusParams.topMargin = bottomMargin;
             }
         } else {
-            focusParams.bottomMargin = SmartGestureUtils.dpToPx(20, mContext);
+            focusParams.bottomMargin = SmartGestureUtils.dpToPx(mContext.getResources().getDimension(R.dimen._10sdp), mContext);
         }
         int leftMargin = (int) properties.getHorizontalOffset();
-        int minWidth = (SmartGestureUtils.dpToPx(50, mContext) + (properties.getRadius() * 2));
+        int minWidth = (SmartGestureUtils.dpToPx(mContext.getResources().getDimension(R.dimen._15sdp), mContext) + (properties.getRadius() * 2));
         if (minWidth < SmartGestureUtils.getScreenWidthPixels(mContext)
-                - leftMargin
+                - Math.abs(leftMargin)
                 - binding.getRoot().getPaddingLeft()
                 - binding.getRoot().getPaddingRight()) {
             if (leftMargin > 0) {
                 focusParams.leftMargin = leftMargin;
             } else {
-                focusParams.rightMargin = leftMargin;
+                focusParams.rightMargin = Math.abs(leftMargin);
             }
         } else {
             focusParams.leftMargin = 0;
-            focusParams.rightMargin = leftMargin;
+            focusParams.rightMargin = 0;
         }
         binding.ivFocus.requestLayout();
     }
@@ -270,6 +270,7 @@ public class SmartGestureDialog extends Dialog {
                 }, properties.getDelay());
                 break;
             case MotionEvent.ACTION_MOVE:
+                if (binding == null) return false;
                 int rectX = (int) (event.getRawX() + properties.getHorizontalTouchAdjust());
                 int rectY = (int) (event.getRawY()
                         + properties.getVerticalTouchAdjust());

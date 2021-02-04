@@ -3,6 +3,7 @@ package com.shrewd.smart_gesture;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.Animation;
@@ -11,11 +12,11 @@ import android.view.animation.ScaleAnimation;
 public class SmartGestureUtils {
 
     public static int pxToDp(float px, Context context) {
-        return (int) (px / context.getResources().getDisplayMetrics().density);
+        return (int) (px / (context.getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
     public static int dpToPx(float dp, Context context) {
-        return (int) (dp * context.getResources().getDisplayMetrics().density);
+        return (int) (dp * (context.getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
     public static int getScreenWidthPixels(Context context) {

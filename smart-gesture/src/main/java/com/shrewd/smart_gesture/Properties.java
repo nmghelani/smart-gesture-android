@@ -69,14 +69,14 @@ public class Properties {
         defaultTitle = builder.defaultTitle;
         defaultDescription = builder.defaultDescription;
 
-        builder.MIN_RADIUS.removeObservers((LifecycleOwner) mContext);
+//        builder.MIN_RADIUS.removeObservers((LifecycleOwner) mContext);
         builder.MIN_RADIUS.observe((LifecycleOwner) mContext, new Observer<Integer>() {
             @Override
             public void onChanged(Integer integer) {
                 MIN_RADIUS.setValue(integer);
             }
         });
-        builder.MAX_RADIUS.removeObservers((LifecycleOwner) mContext);
+//        builder.MAX_RADIUS.removeObservers((LifecycleOwner) mContext);
         builder.MAX_RADIUS.observe((LifecycleOwner) mContext, new Observer<Integer>() {
             @Override
             public void onChanged(Integer integer) {
@@ -84,11 +84,6 @@ public class Properties {
             }
         });
 
-        MIN_RADIUS.removeObservers((LifecycleOwner) mContext);
-        MIN_RADIUS.observe((LifecycleOwner) mContext, integer -> Log.d(TAG, "onChanged: Min radius " + integer));
-
-        MAX_RADIUS.removeObservers((LifecycleOwner) mContext);
-        MAX_RADIUS.observe((LifecycleOwner) mContext, integer -> Log.d(TAG, "onChanged: Max radius " + integer));
     }
 
     public Builder getBuilder() {

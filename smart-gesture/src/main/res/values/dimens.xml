@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <dimen name="txt_padding_h">20dp</dimen>
-  <dimen name="btn_default_size">60dp</dimen>
-  <dimen name="default_radius">120dp</dimen>
-  <dimen name="min_size">40dp</dimen>
-  <dimen name="max_size">80dp</dimen>
+  <dimen name="txt_padding_h">@dimen/_15sdp</dimen>
+  <dimen name="btn_default_size">@dimen/_40sdp</dimen>
+  <dimen name="default_radius">@dimen/_80sdp</dimen>
+  <dimen name="min_size">@dimen/_20sdp</dimen>
+  <dimen name="max_size">@dimen/_45sdp</dimen>
 </resources>
