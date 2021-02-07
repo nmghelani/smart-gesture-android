@@ -23,7 +23,7 @@ allprojects {
 ```
 dependencies {
     ...
-    implementation 'com.github.nmghelani:smart-gesture-android:0.1.3'
+    implementation 'com.github.nmghelani:smart-gesture-android:0.1.6'
 }
 ```
 ### Now in your Java code,
