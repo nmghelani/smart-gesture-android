@@ -257,14 +257,16 @@ public class SmartGestureDialog extends Dialog {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 isStillDown = true;
-                isGestureRunning = true;
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         if (isStillDown) {
+                            isGestureRunning = true;
                             initDialog(event);
                             show();
                             smartGestureCallBack.onGestureStarted();
+                        } else {
+                            smartGestureCallBack.onJustClicked();
                         }
                     }
                 }, properties.getDelay());
@@ -290,7 +292,7 @@ public class SmartGestureDialog extends Dialog {
                 onDeselected();
                 break;
             case MotionEvent.ACTION_UP:
-                if (isGestureRunning) {
+                if (isGestureRunning && isStillDown) {
                     dismiss();
                 }
                 isStillDown = false;

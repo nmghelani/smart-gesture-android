@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         .setBgAlpha(0)
         .setTypeface(Typeface.MONOSPACE)
         .setTextGravity(Gravity.CENTER)
-        .setDelay(100)
+        .setDelay(500)
         .setNonSelectedButtonTintResId(R.color.white);
     properties = propertyBuilder.create();
 
@@ -99,6 +99,11 @@ public class MainActivity extends AppCompatActivity {
 
       @Override
       public void onGestureEnded() {
+      }
+
+      @Override
+      public void onJustClicked() {
+        Toast.makeText(MainActivity.this, "Hover and swipe to filter", Toast.LENGTH_SHORT).show();
       }
     });
     binding.btnTouch.setOnTouchListener(smartGestureListener);

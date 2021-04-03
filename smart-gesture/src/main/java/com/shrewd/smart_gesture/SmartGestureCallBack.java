@@ -5,4 +5,5 @@ public interface SmartGestureCallBack {
     void onNothingSelected();
     void onGestureStarted();
     void onGestureEnded();
+    void onJustClicked();
 }

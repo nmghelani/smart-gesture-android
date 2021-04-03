@@ -291,7 +291,7 @@
         android:id="@+id/btn_touch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_gravity="bottom|center"
         android:layout_margin="10dp"
         android:text="Touch me!" />
 
