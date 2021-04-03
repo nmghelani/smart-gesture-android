@@ -35,6 +35,7 @@ buttons.add(new GestureButton(1, R.drawable.ic_launcher, "Write title here", "Wr
 buttons.add(new GestureButton(2, R.drawable.ic_launcher, "Write title here", "Write description here"));
 buttons.add(new GestureButton(3, R.drawable.ic_launcher, "Write title here", "Write description here"));
 buttons.add(new GestureButton(4, R.drawable.ic_launcher, "Write title here", "Write description here"));
+buttons.add(new GestureButton(4, R.drawable.ic_launcher, "Write title here", "Write description here"));
 
 SmartGestureListener gestureListener = new SmartGestureListener(mContext, buttons);
 
@@ -60,6 +61,11 @@ gestureListener.setCallback(new SmartGestureCallBack() {
     public void onGestureEnded() {
         //Gesture dialog is closed
     }
+    
+    @Override
+    public void onJustClicked() {
+      Toast.makeText(MainActivity.this, "Hold the button", Toast.LENGTH_SHORT).show();
+    }
 });
 
 //set gestureListener to a view as touchListener
@@ -70,7 +76,7 @@ That's it. You've added a smart gesture dialog with beautiful UI and feel of 3D 
 
 **NOTE:**
 - The view with this touch listener should be a direct child of rootLayout or its parent should cover whole screen or else the touch event will be cancelled and so the dialog will get dissmissed.
-- You can add upto 5 buttons.
+- You can add upto 6 buttons.
 
 
 ### To customize it,
@@ -84,6 +90,7 @@ new Properties.Builder(this)
         .setNonSelectedButtonTint(getResources().getColor(R.color.black)) //Non-selected icon tint
         .setSelectedButtonDrawable(ContextCompat.getDrawable(mContext,R.drawable.bg_checked)) //Selected button background
         .setNonSelectedButtonDrawable(ContextCompat.getDrawable(mContext,R.drawable.bg_unchecked)) //Non-selected button background
+        .setBtnSpacingOffset(20) //horizontal spacing between buttons
         .setTextHorizontalOffset(50) //To adjust text (Left-right) in dp
         .setTextVerticalOffset(50) //To adjust text (Top-Bottom) in dp
         .setVerticalTouchOffset(10) //To adjust hover (Top-Bottom) in dp
