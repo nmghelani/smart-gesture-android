@@ -31,8 +31,8 @@
 
   <ImageView
     android:id="@+id/iv_focus"
-    android:layout_width="@dimen/btn_default_size"
-    android:layout_height="@dimen/btn_default_size"
+    android:layout_width="1dp"
+    android:layout_height="1dp"
     app:layout_constraintBottom_toBottomOf="@id/root_layout"
     app:layout_constraintEnd_toEndOf="@id/root_layout"
     app:layout_constraintStart_toStartOf="@id/root_layout" />

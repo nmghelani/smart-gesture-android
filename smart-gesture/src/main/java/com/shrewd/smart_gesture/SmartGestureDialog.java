@@ -1,6 +1,5 @@
 package com.shrewd.smart_gesture;
 
-import android.animation.Animator;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -37,6 +36,8 @@ public class SmartGestureDialog extends Dialog {
     private View touchedView;
     private View lastSelected;
     private boolean isStillDown = false, isGestureRunning = false;
+    public final static int MAX_BUTTON = 6;
+    private int focusId;
 
     public SmartGestureDialog(@NonNull Context mContext, List<GestureButton> buttonList, Properties properties) {
         super(mContext);
@@ -50,8 +51,8 @@ public class SmartGestureDialog extends Dialog {
     }
 
     public void updateList(List<GestureButton> buttonList) {
-        if (buttonList.size() > 5) {
-            for (int i = 5; i < buttonList.size(); i++) {
+        if (buttonList.size() > MAX_BUTTON) {
+            for (int i = MAX_BUTTON; i < buttonList.size(); i++) {
                 buttonList.remove(i);
             }
         }
@@ -83,11 +84,321 @@ public class SmartGestureDialog extends Dialog {
             binding.tvDescription.animate().alpha(1).setDuration(properties.getAnimationTime() * 2).start();
         }
 
-        int focusId = binding.ivFocus.getId();
+        focusId = binding.ivFocus.getId();
+        if (buttonList.size() == 1) {
+            setup1Button();
+        } else if (buttonList.size() == 2) {
+            setup2Buttons();
+        } else if (buttonList.size() == 3) {
+            setup3Buttons();
+        } else if (buttonList.size() == 4) {
+            setup4Buttons();
+        } else if (buttonList.size() == 5) {
+            setup5Buttons();
+        } else if (buttonList.size() == 6) {
+            setup6Buttons();
+        } else {
+            //Not useful at all
+            boolean isEvenNoOfBtn = isEven(buttonList.size());
+            for (int i = isEvenNoOfBtn ? 1 : 0; i < (isEvenNoOfBtn ? buttonList.size() + 1 : buttonList.size()); i++) {
+                GestureButton gestureButton = buttonList.get(isEvenNoOfBtn ? i - 1 : i);
+                ImageView imageView = new ImageView(mContext);
+                imageView.setId(gestureButton.getId());
+                imageView.setPadding(
+                        properties.getButtonPadding(),
+                        properties.getButtonPadding(),
+                        properties.getButtonPadding(),
+                        properties.getButtonPadding()
+                );
+                imageView.setImageResource(gestureButton.getIconResId());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    imageView.setElevation(10);
+                    imageView.setImageTintList(ColorStateList.valueOf(properties.getNonSelectedButtonTint()));
+                }
+                float defaultTranslationX = imageView.getTranslationX();
+                float defaultTranslationY = imageView.getTranslationY();
+                ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(properties.getBtnSize(), properties.getBtnSize());
+                if (i == 0) {
+                    params.startToStart = focusId;
+                    params.endToEnd = focusId;
+                    params.bottomToTop = focusId;
+                    params.bottomMargin = properties.getRadius() - properties.getBtnSize();
+                } else if (i == 1) {
+                    params.endToStart = focusId;
+                    params.bottomToTop = focusId;
+                    if (isEvenNoOfBtn) {
+                        params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 8)) - properties.getBtnSize());
+                        params.bottomMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 8)) - properties.getBtnSize());
+                    } else {
+                        params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 6)) - properties.getBtnSize());
+                        params.bottomMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 6)) - properties.getBtnSize());
+                    }
+                    imageView.setTranslationX(defaultTranslationX + params.rightMargin);
+                } else if (i == 2) {
+                    params.startToEnd = focusId;
+                    params.bottomToTop = focusId;
+                    if (isEvenNoOfBtn) {
+                        params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 8)) - properties.getBtnSize());
+                        params.bottomMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 8)) - properties.getBtnSize());
+                    } else {
+                        params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 6)) - properties.getBtnSize());
+                        params.bottomMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 6)) - properties.getBtnSize());
+                    }
+                    imageView.setTranslationX(defaultTranslationX - params.leftMargin);
+                } else if (i == 3) {
+                    params.endToStart = focusId;
+                    params.bottomToTop = focusId;
+                    if (isEvenNoOfBtn) {
+                        params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.cos(Math.PI / 8)) - properties.getBtnSize());
+                        params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 8)) - properties.getBtnSize());
+                    } else {
+                        params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 3)) - properties.getBtnSize());
+                        params.bottomMargin = (int) (properties.getRadius() * Math.cos(Math.PI / 3) - properties.getBtnSize());
+                    }
+                    imageView.setTranslationX(defaultTranslationX + params.rightMargin);
+                } else if (i == 4) {
+                    params.startToEnd = focusId;
+                    params.bottomToTop = focusId;
+                    if (isEvenNoOfBtn) {
+                        params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.cos(Math.PI / 8)) - properties.getBtnSize());
+                        params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 8)) - properties.getBtnSize());
+                    } else {
+                        params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 3)) - properties.getBtnSize());
+                        params.bottomMargin = (int) (properties.getRadius() * Math.cos(Math.PI / 3) - properties.getBtnSize());
+                    }
+                    imageView.setTranslationX(defaultTranslationX - params.leftMargin);
+                } else if (i == 5) {
+                    params.endToStart = focusId;
+                    params.bottomToTop = focusId;
+                    if (isEvenNoOfBtn) {
+                        params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.cos(Math.PI / 8)) - properties.getBtnSize());
+                        params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 8)) - properties.getBtnSize());
+                    } else {
+                        params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 3)) - properties.getBtnSize());
+                        params.bottomMargin = (int) (properties.getRadius() * Math.cos(Math.PI / 3) - properties.getBtnSize());
+                    }
+                    imageView.setTranslationX(defaultTranslationX + params.rightMargin);
+                }
+                if (isEvenNoOfBtn) {
+                    params.bottomMargin -= (int) ((properties.getRadius() * Math.sin(Math.PI / 8)) - properties.getBtnSize());
+                } else {
+                    params.bottomMargin -= (int) (properties.getRadius() * Math.cos(Math.PI / 3) - properties.getBtnSize());
+                }
+                imageView.setTranslationY(defaultTranslationY + params.bottomMargin);
+                imageView.setBackground(properties.getNonSelectedButtonDrawable());
+                imageView.setLayoutParams(params);
+                binding.getRoot().addView(imageView);
+                imageView.animate()
+                        .translationX(defaultTranslationX)
+                        .translationY(defaultTranslationY)
+                        .setDuration(properties.isAnimationEnabled() ? properties.getAnimationTime() * 2 : 0)
+                        .start();
+            }
+        }
 
-        boolean isEvenNoOfBtn = isEven(buttonList.size());
-        for (int i = isEvenNoOfBtn ? 1 : 0; i < (isEvenNoOfBtn ? buttonList.size() + 1 : buttonList.size()); i++) {
-            GestureButton gestureButton = buttonList.get(isEvenNoOfBtn ? i - 1 : i);
+        Window window = getWindow();
+        if (window != null) {
+            ColorDrawable background = new ColorDrawable(properties.getBackgroundColor());
+            background.setAlpha(properties.getBgAlpha());
+            window.setBackgroundDrawable(background);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.width = WindowManager.LayoutParams.MATCH_PARENT;
+            params.height = WindowManager.LayoutParams.MATCH_PARENT;
+            window.setAttributes(params);
+        }
+
+        binding.tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, properties.getTitleSize());
+        binding.tvDescription.setTextSize(TypedValue.COMPLEX_UNIT_SP, properties.getDescriptionSize());
+    }
+
+    private void setup1Button() {
+        GestureButton gestureButton = buttonList.get(0);
+        ImageView imageView = new ImageView(mContext);
+        imageView.setId(gestureButton.getId());
+        imageView.setPadding(
+                properties.getButtonPadding(),
+                properties.getButtonPadding(),
+                properties.getButtonPadding(),
+                properties.getButtonPadding()
+        );
+        imageView.setImageResource(gestureButton.getIconResId());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            imageView.setElevation(10);
+            imageView.setImageTintList(ColorStateList.valueOf(properties.getNonSelectedButtonTint()));
+        }
+        float defaultTranslationX = imageView.getTranslationX();
+        float defaultTranslationY = imageView.getTranslationY();
+        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(properties.getBtnSize(), properties.getBtnSize());
+        params.startToStart = focusId;
+        params.endToEnd = focusId;
+        params.bottomToTop = focusId;
+        params.bottomMargin = properties.getRadius() - properties.getBtnSize();
+        imageView.setTranslationY(defaultTranslationY + params.bottomMargin);
+        imageView.setBackground(properties.getNonSelectedButtonDrawable());
+        imageView.setLayoutParams(params);
+        binding.getRoot().addView(imageView);
+        imageView.animate()
+                .translationX(defaultTranslationX)
+                .translationY(defaultTranslationY)
+                .setDuration(properties.isAnimationEnabled() ? properties.getAnimationTime() * 2 : 0)
+                .start();
+    }
+
+    private void setup2Buttons() {
+        for (int i = 0; i < buttonList.size(); i++) {
+            GestureButton gestureButton = buttonList.get(i);
+            ImageView imageView = new ImageView(mContext);
+            imageView.setId(gestureButton.getId());
+            imageView.setPadding(
+                    properties.getButtonPadding(),
+                    properties.getButtonPadding(),
+                    properties.getButtonPadding(),
+                    properties.getButtonPadding()
+            );
+            imageView.setImageResource(gestureButton.getIconResId());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                imageView.setElevation(10);
+                imageView.setImageTintList(ColorStateList.valueOf(properties.getNonSelectedButtonTint()));
+            }
+            float defaultTranslationX = imageView.getTranslationX();
+            float defaultTranslationY = imageView.getTranslationY();
+            ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(properties.getBtnSize(), properties.getBtnSize());
+            if (i == 0) {
+                params.endToStart = focusId;
+                params.bottomToTop = focusId;
+                params.rightMargin = (int) (properties.getRadius() * ((1 + properties.getBtnSpacingOffset() / 100) * Math.sin(Math.PI / 6)) - properties.getBtnSize()) / 2;
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 6)));
+                imageView.setTranslationX(defaultTranslationX + params.rightMargin);
+            } else if (i == 1) {
+                params.startToEnd = focusId;
+                params.bottomToTop = focusId;
+                params.leftMargin = (int) (properties.getRadius() * ((1 + properties.getBtnSpacingOffset() / 100) * Math.sin(Math.PI / 6)) - properties.getBtnSize()) / 2;
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 6)));
+                imageView.setTranslationX(defaultTranslationX - params.leftMargin);
+            }
+            imageView.setTranslationY(defaultTranslationY + params.bottomMargin);
+            imageView.setBackground(properties.getNonSelectedButtonDrawable());
+            imageView.setLayoutParams(params);
+            binding.getRoot().addView(imageView);
+            imageView.animate()
+                    .translationX(defaultTranslationX)
+                    .translationY(defaultTranslationY)
+                    .setDuration(properties.isAnimationEnabled() ? properties.getAnimationTime() * 2 : 0)
+                    .start();
+        }
+    }
+
+    private void setup3Buttons() {
+        for (int i = 0; i < buttonList.size(); i++) {
+            GestureButton gestureButton = buttonList.get(i);
+            ImageView imageView = new ImageView(mContext);
+            imageView.setId(gestureButton.getId());
+            imageView.setPadding(
+                    properties.getButtonPadding(),
+                    properties.getButtonPadding(),
+                    properties.getButtonPadding(),
+                    properties.getButtonPadding()
+            );
+            imageView.setImageResource(gestureButton.getIconResId());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                imageView.setElevation(10);
+                imageView.setImageTintList(ColorStateList.valueOf(properties.getNonSelectedButtonTint()));
+            }
+            float defaultTranslationX = imageView.getTranslationX();
+            float defaultTranslationY = imageView.getTranslationY();
+            ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(properties.getBtnSize(), properties.getBtnSize());
+            if (i == 0) {
+                params.startToStart = focusId;
+                params.endToEnd = focusId;
+                params.bottomToTop = focusId;
+                params.bottomMargin = properties.getRadius();
+            } else if (i == 1) {
+                params.endToStart = focusId;
+                params.bottomToTop = focusId;
+                params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 6)) - properties.getBtnSize());
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 3)));
+                imageView.setTranslationX(defaultTranslationX + params.rightMargin);
+            } else if (i == 2) {
+                params.startToEnd = focusId;
+                params.bottomToTop = focusId;
+                params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 6)) - properties.getBtnSize());
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 3)));
+                imageView.setTranslationX(defaultTranslationX - params.leftMargin);
+            }
+            params.bottomMargin -= (int) ((properties.getRadius() * Math.sin(Math.PI / 3)) - properties.getBtnSize());
+            imageView.setTranslationY(defaultTranslationY + params.bottomMargin);
+            imageView.setBackground(properties.getNonSelectedButtonDrawable());
+            imageView.setLayoutParams(params);
+            binding.getRoot().addView(imageView);
+            imageView.animate()
+                    .translationX(defaultTranslationX)
+                    .translationY(defaultTranslationY)
+                    .setDuration(properties.isAnimationEnabled() ? properties.getAnimationTime() * 2 : 0)
+                    .start();
+        }
+    }
+
+    private void setup4Buttons() {
+        for (int i = 0; i < buttonList.size(); i++) {
+            GestureButton gestureButton = buttonList.get(i);
+            ImageView imageView = new ImageView(mContext);
+            imageView.setId(gestureButton.getId());
+            imageView.setPadding(
+                    properties.getButtonPadding(),
+                    properties.getButtonPadding(),
+                    properties.getButtonPadding(),
+                    properties.getButtonPadding()
+            );
+            imageView.setImageResource(gestureButton.getIconResId());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                imageView.setElevation(10);
+                imageView.setImageTintList(ColorStateList.valueOf(properties.getNonSelectedButtonTint()));
+            }
+            float defaultTranslationX = imageView.getTranslationX();
+            float defaultTranslationY = imageView.getTranslationY();
+            ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(properties.getBtnSize(), properties.getBtnSize());
+            if (i == 0) {
+                params.endToStart = focusId;
+                params.bottomToTop = focusId;
+                params.rightMargin = (int) (properties.getRadius() * ((1 + properties.getBtnSpacingOffset() / 100) * Math.sin(Math.PI / 6)) - properties.getBtnSize()) / 2;
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 3)));
+                imageView.setTranslationX(defaultTranslationX + params.rightMargin);
+            } else if (i == 1) {
+                params.startToEnd = focusId;
+                params.bottomToTop = focusId;
+                params.leftMargin = (int) (properties.getRadius() * ((1 + properties.getBtnSpacingOffset() / 100) * Math.sin(Math.PI / 6)) - properties.getBtnSize()) / 2;
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 3)));
+                imageView.setTranslationX(defaultTranslationX - params.leftMargin);
+            } else if (i == 2) {
+                params.endToStart = focusId;
+                params.bottomToTop = focusId;
+                params.rightMargin = (int) (properties.getRadius() * ((1 + properties.getBtnSpacingOffset() / 100) * Math.sin(Math.PI / 3)) - properties.getBtnSize());
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 6)));
+                imageView.setTranslationX(defaultTranslationX + params.rightMargin);
+            } else if (i == 3) {
+                params.startToEnd = focusId;
+                params.bottomToTop = focusId;
+                params.leftMargin = (int) (properties.getRadius() * ((1 + properties.getBtnSpacingOffset() / 100) * Math.sin(Math.PI / 3)) - properties.getBtnSize());
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 6)));
+                imageView.setTranslationX(defaultTranslationX - params.leftMargin);
+            }
+            params.bottomMargin -= (int) ((properties.getRadius() * Math.sin(Math.PI / 6)));
+            imageView.setTranslationY(defaultTranslationY + params.bottomMargin);
+            imageView.setBackground(properties.getNonSelectedButtonDrawable());
+            imageView.setLayoutParams(params);
+            binding.getRoot().addView(imageView);
+            imageView.animate()
+                    .translationX(defaultTranslationX)
+                    .translationY(defaultTranslationY)
+                    .setDuration(properties.isAnimationEnabled() ? properties.getAnimationTime() * 2 : 0)
+                    .start();
+        }
+    }
+
+    private void setup5Buttons() {
+        for (int i = 0; i < buttonList.size(); i++) {
+            GestureButton gestureButton = buttonList.get(i);
             ImageView imageView = new ImageView(mContext);
             imageView.setId(gestureButton.getId());
             imageView.setPadding(
@@ -112,78 +423,108 @@ public class SmartGestureDialog extends Dialog {
             } else if (i == 1) {
                 params.endToStart = focusId;
                 params.bottomToTop = focusId;
-                if (isEvenNoOfBtn) {
-                    params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 8)) - properties.getBtnSize());
-                    params.bottomMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 8)) - properties.getBtnSize());
-                } else {
-                    params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 6)) - properties.getBtnSize());
-                    params.bottomMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 6)) - properties.getBtnSize());
-                }
+                params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 6)) - properties.getBtnSize());
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 3)) - properties.getBtnSize());
                 imageView.setTranslationX(defaultTranslationX + params.rightMargin);
             } else if (i == 2) {
                 params.startToEnd = focusId;
                 params.bottomToTop = focusId;
-                if (isEvenNoOfBtn) {
-                    params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 8)) - properties.getBtnSize());
-                    params.bottomMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 8)) - properties.getBtnSize());
-                } else {
-                    params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 6)) - properties.getBtnSize());
-                    params.bottomMargin = (int) ((properties.getRadius() * Math.cos(Math.PI / 6)) - properties.getBtnSize());
-                }
+                params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 6)) - properties.getBtnSize());
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 3)) - properties.getBtnSize());
                 imageView.setTranslationX(defaultTranslationX - params.leftMargin);
             } else if (i == 3) {
                 params.endToStart = focusId;
                 params.bottomToTop = focusId;
-                if (isEvenNoOfBtn) {
-                    params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.cos(Math.PI / 8)) - properties.getBtnSize());
-                    params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 8)) - properties.getBtnSize());
-                } else {
-                    params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 3)) - properties.getBtnSize());
-                    params.bottomMargin = (int) (properties.getRadius() * Math.cos(Math.PI / 3) - properties.getBtnSize());
-                }
+                params.rightMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 3)) - properties.getBtnSize());
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 6)) - properties.getBtnSize());
                 imageView.setTranslationX(defaultTranslationX + params.rightMargin);
             } else if (i == 4) {
                 params.startToEnd = focusId;
                 params.bottomToTop = focusId;
-                if (isEvenNoOfBtn) {
-                    params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.cos(Math.PI / 8)) - properties.getBtnSize());
-                    params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 8)) - properties.getBtnSize());
-                } else {
-                    params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 3)) - properties.getBtnSize());
-                    params.bottomMargin = (int) (properties.getRadius() * Math.cos(Math.PI / 3) - properties.getBtnSize());
-                }
+                params.leftMargin = (int) ((properties.getRadius() * (1 + (properties.getBtnSpacingOffset() / 100)) * Math.sin(Math.PI / 3)) - properties.getBtnSize());
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 6)) - properties.getBtnSize());
                 imageView.setTranslationX(defaultTranslationX - params.leftMargin);
             }
-            if (isEvenNoOfBtn) {
-                params.bottomMargin -= (int) ((properties.getRadius() * Math.sin(Math.PI / 8)) - properties.getBtnSize());
-            } else {
-                params.bottomMargin -= (int) (properties.getRadius() * Math.cos(Math.PI / 3) - properties.getBtnSize());
-            }
+            params.bottomMargin -= (int) (properties.getRadius() * Math.sin(Math.PI / 6) - properties.getBtnSize());
             imageView.setTranslationY(defaultTranslationY + params.bottomMargin);
             imageView.setBackground(properties.getNonSelectedButtonDrawable());
             imageView.setLayoutParams(params);
             binding.getRoot().addView(imageView);
             imageView.animate()
-                .translationX(defaultTranslationX)
-                .translationY(defaultTranslationY)
-                .setDuration(properties.isAnimationEnabled() ? properties.getAnimationTime() * 2 : 0)
-                .start();
+                    .translationX(defaultTranslationX)
+                    .translationY(defaultTranslationY)
+                    .setDuration(properties.isAnimationEnabled() ? properties.getAnimationTime() * 2 : 0)
+                    .start();
         }
+    }
 
-        Window window = getWindow();
-        if (window != null) {
-            ColorDrawable background = new ColorDrawable(properties.getBackgroundColor());
-            background.setAlpha(properties.getBgAlpha());
-            window.setBackgroundDrawable(background);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-            WindowManager.LayoutParams params = window.getAttributes();
-            params.width = WindowManager.LayoutParams.MATCH_PARENT;
-            params.height = WindowManager.LayoutParams.MATCH_PARENT;
-            window.setAttributes(params);
+    private void setup6Buttons() {
+        for (int i = 0; i < buttonList.size(); i++) {
+            GestureButton gestureButton = buttonList.get(i);
+            ImageView imageView = new ImageView(mContext);
+            imageView.setId(gestureButton.getId());
+            imageView.setPadding(
+                    properties.getButtonPadding(),
+                    properties.getButtonPadding(),
+                    properties.getButtonPadding(),
+                    properties.getButtonPadding()
+            );
+            imageView.setImageResource(gestureButton.getIconResId());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                imageView.setElevation(10);
+                imageView.setImageTintList(ColorStateList.valueOf(properties.getNonSelectedButtonTint()));
+            }
+            float defaultTranslationX = imageView.getTranslationX();
+            float defaultTranslationY = imageView.getTranslationY();
+            ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(properties.getBtnSize(), properties.getBtnSize());
+            if (i == 0) {
+                params.endToStart = focusId;
+                params.bottomToTop = focusId;
+                params.rightMargin = (int) (properties.getRadius() * ((1 + properties.getBtnSpacingOffset() / 100) * Math.sin(Math.PI / 6)) - properties.getBtnSize()) / 2;
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 3)));
+                imageView.setTranslationX(defaultTranslationX + params.rightMargin);
+            } else if (i == 1) {
+                params.startToEnd = focusId;
+                params.bottomToTop = focusId;
+                params.leftMargin = (int) (properties.getRadius() * ((1 + properties.getBtnSpacingOffset() / 100) * Math.sin(Math.PI / 6)) - properties.getBtnSize()) / 2;
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 3)));
+                imageView.setTranslationX(defaultTranslationX - params.leftMargin);
+            } else if (i == 2) {
+                params.endToStart = focusId;
+                params.bottomToTop = focusId;
+                params.rightMargin = (int) (properties.getRadius() * ((1 + properties.getBtnSpacingOffset() / 100) * Math.sin(Math.PI / 3)) - properties.getBtnSize());
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 6)));
+                imageView.setTranslationX(defaultTranslationX + params.rightMargin);
+            } else if (i == 3) {
+                params.startToEnd = focusId;
+                params.bottomToTop = focusId;
+                params.leftMargin = (int) (properties.getRadius() * ((1 + properties.getBtnSpacingOffset() / 100) * Math.sin(Math.PI / 3)) - properties.getBtnSize());
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(Math.PI / 6)));
+                imageView.setTranslationX(defaultTranslationX - params.leftMargin);
+            } else if (i == 4) {
+                params.endToStart = focusId;
+                params.bottomToTop = focusId;
+                params.rightMargin = (int) (properties.getRadius() * ((1 + properties.getBtnSpacingOffset() / 100) * Math.sin(Math.PI / 2)) - properties.getBtnSize());
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(0)));
+                imageView.setTranslationX(defaultTranslationX + params.rightMargin);
+            } else if (i == 5) {
+                params.startToEnd = focusId;
+                params.bottomToTop = focusId;
+                params.leftMargin = (int) (properties.getRadius() * ((1 + properties.getBtnSpacingOffset() / 100) * Math.sin(Math.PI / 2)) - properties.getBtnSize());
+                params.bottomMargin = (int) ((properties.getRadius() * Math.sin(0)));
+                imageView.setTranslationX(defaultTranslationX - params.leftMargin);
+            }
+//            params.bottomMargin -= (int) ((properties.getRadius() * Math.sin(Math.PI / 4)));
+            imageView.setTranslationY(defaultTranslationY + params.bottomMargin);
+            imageView.setBackground(properties.getNonSelectedButtonDrawable());
+            imageView.setLayoutParams(params);
+            binding.getRoot().addView(imageView);
+            imageView.animate()
+                    .translationX(defaultTranslationX)
+                    .translationY(defaultTranslationY)
+                    .setDuration(properties.isAnimationEnabled() ? properties.getAnimationTime() * 2 : 0)
+                    .start();
         }
-
-        binding.tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, properties.getTitleSize());
-        binding.tvDescription.setTextSize(TypedValue.COMPLEX_UNIT_SP, properties.getDescriptionSize());
     }
 
     private void repositionDescriptionView() {
@@ -215,8 +556,8 @@ public class SmartGestureDialog extends Dialog {
 
     private void setFocusView(MotionEvent event) {
         ConstraintLayout.LayoutParams focusParams = (ConstraintLayout.LayoutParams) binding.ivFocus.getLayoutParams();
-        focusParams.height = 0;
-        focusParams.width = properties.getBtnSize();
+        focusParams.height = 1;
+        focusParams.width = !isEven(buttonList.size()) ? properties.getBtnSize() : 1;
         focusParams.startToStart = binding.getRoot().getId();
         focusParams.endToEnd = binding.getRoot().getId();
         focusParams.bottomToBottom = binding.getRoot().getId();
