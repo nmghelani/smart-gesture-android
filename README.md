@@ -7,7 +7,10 @@ I am open sourcing it to give back to community.
 A fully customizable smart gesture in simplest way to give a feel like 3D touch in Android.
 
 ## A quick demo
-<img src="https://github.com/nmghelani/smart-gesture-android/blob/master/21-01-02-22-41-33.gif" width="300" height="648" />
+
+[![Video demo](https://github.com/nmghelani/smart-gesture-android/blob/master/smart-gesture-library.gif)](https://youtu.be/vt5fpE0bzSY)
+
+Video demo: https://www.youtube.com/watch?v=NTqDCo0q2ys
 
 ## How to implement in your project
 ### Add it in your root build.gradle at the end of repositories:
