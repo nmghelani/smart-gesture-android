@@ -8,7 +8,7 @@ A fully customizable smart gesture in simplest way to give a feel like 3D touch 
 
 ## A quick demo
 
-[![Video demo](https://github.com/nmghelani/smart-gesture-android/blob/master/smart-gesture-library.gif)](https://youtu.be/vt5fpE0bzSY)
+[![Video demo](https://github.com/nmghelani/smart-gesture-android/blob/master/smart-gesture-library.gif)](https://www.youtube.com/watch?v=NTqDCo0q2ys)
 
 Video demo: https://www.youtube.com/watch?v=NTqDCo0q2ys
 
