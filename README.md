@@ -38,7 +38,7 @@ buttons.add(new GestureButton(1, R.drawable.ic_launcher, "Write title here", "Wr
 buttons.add(new GestureButton(2, R.drawable.ic_launcher, "Write title here", "Write description here"));
 buttons.add(new GestureButton(3, R.drawable.ic_launcher, "Write title here", "Write description here"));
 buttons.add(new GestureButton(4, R.drawable.ic_launcher, "Write title here", "Write description here"));
-buttons.add(new GestureButton(4, R.drawable.ic_launcher, "Write title here", "Write description here"));
+buttons.add(new GestureButton(5, R.drawable.ic_launcher, "Write title here", "Write description here"));
 
 SmartGestureListener gestureListener = new SmartGestureListener(mContext, buttons);
 
