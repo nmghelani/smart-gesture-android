@@ -617,7 +617,9 @@ public class SmartGestureDialog extends Dialog {
                 int rectX = (int) (event.getRawX() + properties.getHorizontalTouchAdjust());
                 int rectY = (int) (event.getRawY()
                         + properties.getVerticalTouchAdjust());
-
+                if (binding==null) {
+                    return false;
+                }
                 for (int i = 0; i < binding.getRoot().getChildCount(); i++) {
                     View view = binding.getRoot().getChildAt(i);
                     if (view instanceof ImageView && view != binding.ivFocus) {
