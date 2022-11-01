@@ -105,7 +105,7 @@ new Properties.Builder(this)
         .setAnimationTime(100) //Animation time on hover
         .create();
 ```
-   
+
 
 Voila, You've sucessfully customized the smart-gesture-dialog for android.
    
